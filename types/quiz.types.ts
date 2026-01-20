@@ -18,20 +18,31 @@ export interface Question {
 }
 
 export interface SessionData {
-    allAttempts: never[];
-    id:string;
+    id: string;
     userId: string;
     name: string;
     topic: string;
+
     questionlist: Question[];
+
     completedQuestions: number;
     correctAnswers: number;
     totalQuestions: number;
+
     subtopicPerformance: Record<string, SubtopicPerformance>;
-    createdAt: Date;
-    updatedAt: Date;
+
+    allAttempts?: LastPracticeMetrics[];
+
+    isCompleted?: boolean;
+    score?: number;
+    lastAttemptedDate?: Date | Timestamp;
+
+    createdAt: Date | Timestamp;
+    updatedAt: Date | Timestamp;
+
     content?: string;
 }
+
 
 export interface LastPracticeMetrics {
   lastScorePercentage: number;
