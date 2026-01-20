@@ -52,14 +52,14 @@ export class SupadataService {
   // VIDEO / SOCIAL TRANSCRIPT
   // ----------------------------
   private async extractTranscript(url: string): Promise<PageTextResult> {
-    let result = await this.supadata.transcript({
+    let result: any = await this.supadata.transcript({
       url,
       text: true,
       mode: "auto",
     });
 
     // Handle async job
-    if ("jobId" in result) {
+    if (result && "jobId" in result) {
       result = await this.waitForTranscript(result.jobId);
     }
 
@@ -72,7 +72,7 @@ export class SupadataService {
         ? "youtube"
         : "social",
       text: this.normalizeText(result.content),
-      title: result.title,
+      title: result.title || "Untitled",
     };
   }
 

@@ -18,6 +18,7 @@ export interface Question {
 }
 
 export interface SessionData {
+    allAttempts: never[];
     id:string;
     userId: string;
     name: string;
@@ -41,9 +42,13 @@ export interface LastPracticeMetrics {
 }
 
 export interface SubtopicPerformanceEntry {
-    name: string;
-        scored: number;
-        total: number;
+    name?: string;
+    scored?: number;
+    total: number;
+    correct?: number;
+    wrong?: number;
+    correctList?: string[];
+    wrongList?: string[];
 }
 
 export interface QuizState {
@@ -61,10 +66,12 @@ export interface QuizState {
 
 export interface SubtopicPerformance {
   total: number;
-  correct: number;
-  wrong: number;
-  correctList: string[];
-  wrongList: string[];
+  correct?: number;
+  wrong?: number;
+  correctList?: string[];
+  wrongList?: string[];
+  scored?: number;
+  name?: string;
 }
 
 export interface WeakTopic {

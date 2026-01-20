@@ -72,7 +72,7 @@ export const useSessionData = (sessionId: string, userId?: string) => {
     };
 
     if (isCorrect) {
-      existing.scored += 1;
+      existing.scored = (existing.scored ?? 0) + 1;
     }
 
     // Recalculate total for this subtopic from the array to keep FeynMeter in sync
