@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useId } from "react";
 
-export default function LoadingScreen({ message }: { message?: string }) {
+export default function LoadingScreen() {
   const uid = useId();
   const maskId = `lunora-moon-loading-${uid}`;
 
@@ -69,12 +69,6 @@ export default function LoadingScreen({ message }: { message?: string }) {
           </span>
         </span>
       </div>
-
-      {message ? (
-        <div className="absolute bottom-10 text-white/70 text-xs sm:text-sm font-semibold tracking-wider">
-          {message}
-        </div>
-      ) : null}
 
       {/* === Animations === */}
       <style jsx>{`
