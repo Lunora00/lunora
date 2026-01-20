@@ -7,7 +7,16 @@ import {
   getSubscriptionFromIndexedDB,
   saveSubscriptionToIndexedDB,
 } from "../../lib/indexdb/subscriptionCache";
+import { Timestamp } from "firebase/firestore";
 
+
+
+export interface SubscriptionData {
+  isPro: boolean;
+  plan: string | null;
+  dodoCustomerId: string | null;
+  nextBillingDate: Date | Timestamp | null;
+}
 
 export type Plan = "free" | "pro_monthly" | "pro_yearly";
 
@@ -16,8 +25,9 @@ export const useSubscription = () => {
   const [plan, setPlan] = useState<Plan>("free");
   const [isPro, setIsPro] = useState(false); // 👈 Explicit state for isPro
   const [dodoCustomerId, setDodoCustomerId] = useState<string | null>(null);
-  const [nextBillingDate,setnextBillingDate] = useState(null)
-  const [loading, setLoading] = useState(true);
+const [nextBillingDate, setNextBillingDate] =
+  useState<Date | Timestamp | null>(null);
+   const [loading, setLoading] = useState(true);
 
  useEffect(() => {
   if (status !== "authenticated" || !session?.user?.id) {
@@ -34,7 +44,7 @@ export const useSubscription = () => {
       setPlan(cached.plan);
       setIsPro(cached.isPro);
       setDodoCustomerId(cached.dodoCustomerId);
-      setnextBillingDate(cached.nextBillingDate);
+      setNextBillingDate(cached.nextBillingDate);
       setLoading(false);
     }
   })();
@@ -58,7 +68,7 @@ export const useSubscription = () => {
       setPlan(subscriptionPayload.plan);
       setIsPro(subscriptionPayload.isPro);
       setDodoCustomerId(subscriptionPayload.dodoCustomerId);
-      setnextBillingDate(subscriptionPayload.nextBillingDate);
+      setNextBillingDate(subscriptionPayload.nextBillingDate);
       setLoading(false);
 
       // 3️⃣ SAVE EVERYTHING TO INDEXEDDB

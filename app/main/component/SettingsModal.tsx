@@ -23,8 +23,23 @@ import {
   Award,
 } from "lucide-react";
 import { useSubscription } from "@/app/hooks/useSubscription";
+import { Timestamp } from "firebase/firestore";
+
 
 const TELEGRAM_USERNAME = "kelvinint";
+
+type PracticeSession = {
+  createdAt: Date | Timestamp;
+  lastAttemptedDate?: Date | Timestamp;
+};
+
+type Session = {
+  id: string;
+  createdAt: Date | Timestamp;
+  lastAttemptedDate?: Date | Timestamp;
+  [key: string]: any;
+};
+
 
 const MASCOTS = {
   normal: { image: "/normal1.png", label: "Rookie", requirement: 0 },
@@ -94,9 +109,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const billingInfo = useMemo(() => {
     if (!nextBillingDate) return { formattedDate: "N/A", daysLeft: null };
 
-    const date = nextBillingDate.toDate
-      ? nextBillingDate.toDate()
-      : new Date(nextBillingDate);
+    const date = nextBillingDate instanceof Date 
+      ? nextBillingDate 
+      : (nextBillingDate as any).toDate?.() || new Date();
 
     const today = new Date();
     const diffTime = date.getTime() - today.getTime();
@@ -396,7 +411,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                           alert("Customer ID not found. Please refresh.");
                         }
                       }}
-                      className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 bg-white/5 hover:bg-white/10 border active:scale-95 transition-transform border-white/10 rounded-full cursor-pointer transition-all duration-300"
+                      className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 bg-white/5 hover:bg-white/10 border active:scale-95 transition-all duration-300 border-white/10 rounded-full cursor-pointer"
                     >
                       <Settings className="w-3 h-3 text-white/70" />
                       <span className="text-[8px] md:text-[9px] font-black uppercase tracking-tight text-white/80">
