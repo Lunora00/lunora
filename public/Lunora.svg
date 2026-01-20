@@ -1,0 +1,14 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="crescent-mask">
+      <rect width="128" height="128" fill="white"/>
+      <!-- inner cut -->
+      <circle cx="90" cy="58" r="42" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- big outer moon -->
+  <g transform="rotate(-25 64 64)">
+    <circle cx="60" cy="66" r="60" fill="black" mask="url(#crescent-mask)"/>
+  </g>
+</svg>

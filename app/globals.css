@@ -1,26 +1,351 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+/* You can uncomment one at a time to test */
+* {
+  /* Modern & Geometric */
+  font-family: "Montserrat", sans-serif !important; 
+  /* font-family: "Raleway", sans-serif !important; */
+
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+
+/* Hide scrollbar for Chrome, Safari, Edge */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Hide scrollbar for Firefox */
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #003E33; } /* ACCENT_COLOR - Darker Teal */
+}
+
+.typing-text {
+  /* Animation for the text: 4 seconds total, steps(48) for 48 characters */
+  animation: 
+    typing 4s steps(48, end) forwards,
+    blink-caret .75s step-end infinite;
+  /* Adjust font-family for a more authentic typing look */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  width: 0; /* Important: starting width for the animation */
+}
+
+/* Add these classes if you are not using a modern Tailwind config 
+   that supports arbitrary values for animation */
+.blinking-cursor {
+  animation: blink-caret .75s step-end infinite;
+}
+
+@layer components {
+  .paper-texture {
+    background-color: #fffdfa;
+    background-image: 
+      linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
+      linear-gradient(#eee 0.1em, transparent 0.1em);
+    background-size: 100% 1.5rem;
+  }
+  
+  .hand-drawn-circle {
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    border: 2px solid currentColor;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+.ai-highlight {
+  position: relative;
+  color: #b91c1c; /* Tailwind red-700 */
+  font-weight: 800;
+  padding: 0 2px;
 }
+
+.ai-highlight::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  height: 3px;
+  background: url("data:image/svg+xml,%3Csvg width='100' height='3' viewBox='0 0 100 3' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 2C20 0.5 40 2.5 60 1.5C80 0.5 90 2 99 1' stroke='%23b91c1c' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  z-index: -1;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.5); }
+  100% { opacity: 0.4; transform: scale(1); }
+}
+
+@keyframes wave-flow {
+  from { transform: translateX(0); }
+  to { transform: translateX(-60px); }
+}
+
+.premium-blur {
+  backdrop-filter: blur(8px);
+}.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.2;
+  /* Soft outer glow for that "nebula" feel */
+  box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.4);
+  animation-name: breathe;
+  animation-iteration-count: infinite;
+  /* This timing function creates the "inhale/exhale" feel */
+  animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+  will-change: opacity, transform;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(0.8);
+    box-shadow: 0 0 5px 0px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+    /* High intensity "peak" of the breath */
+    box-shadow: 0 0 15px 3px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% { 
+    opacity: 0.2; 
+    transform: scale(0.7) rotate(0deg); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.1) rotate(90deg); 
+  }
+}
+
+@keyframes hideTopbarStats {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(12px) scale(0.95);
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar-stats {
+    animation: hideTopbarStats 0.35s ease forwards;
+    pointer-events: none;
+  }
+}
+
+/* BASE STYLES */
+.logo-moon { width: 45px; height: 45px; }
+.logo-text { font-size: 28px; padding-left: 28px; }
+
+.stats-dashboard {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.medal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.medal-star {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  z-index: 2;
+}
+
+.medal-glow {
+  position: absolute;
+  inset: 0;
+  filter: blur(20px);
+  border-radius: 50%;
+  opacity: 0.4;
+}
+
+.gold-star { color: #facc15; fill: #facc15; }
+.gold-glow { background: #facc15; }
+.silver-star { color: #d1d5db; fill: #d1d5db; }
+.silver-glow { background: #d1d5db; }
+.bronze-star { color: #cd7f32; fill: #cd7f32; }
+.bronze-glow { background: #cd7f32; }
+
+.medal-count { font-weight: 900; font-size: 2rem; color: white; }
+.medal-label { font-size: 0.8rem; font-weight: bold; color: white; margin-top: 4px; }
+.medal-sub { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+
+.numerical-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 40px;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-icon { width: 28px; height: 28px; }
+.stat-value { font-size: 1.5rem; font-weight: 900; color: white; display: block; line-height: 1; }
+.stat-desc { font-size: 0.6rem; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 1px; font-weight: bold; }
+
+.action-area {
+  margin-top: 60px;
+  background: white;
+  min-height: 50vh;
+  border-radius: 40px 40px 0 0;
+  color: #1e293b;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.action-content h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+.action-content p { color: #64748b; font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 30px; }
+
+.create-btn {
+  background: #1e293b;
+  color: white;
+  padding: 16px 48px;
+  border-radius: 99px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+.library-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 12px 24px;
+  border-radius: 12px;
+  margin: 0 auto;
+  font-weight: bold;
+}
+
+/* MOBILE & TABLET */
+@media (max-width: 800px) {
+  .feyn-left {
+    display: none !important;
+  }
+
+  .paper-right {
+    width: 100% !important;
+  }
+}
+
+/* DESKTOP */
+@media (min-width: 1024px) {
+  .feyn-left {
+    display: flex;
+  }
+
+  .paper-right {
+    width: 50%;
+  }
+}
+/* DEFAULT (DESKTOP) */
+.nav-page-full {
+  display: inline;
+}
+
+.nav-page-compact {
+  display: none;
+}
+
+/* SMALL SCREENS */
+@media (max-width: 640px) {
+  .nav-page-full {
+    display: none;
+  }
+
+  .nav-page-compact {
+    display: inline;
+  }
+}
+
+@media (max-width: 372px) {
+  .sheet-number-block {
+    display: none;
+  }
+}
+
+/* Add these media query rules to your global.css */
+
+/* Hide left sidebar on very small screens */
+@media (max-width: 400px) {
+  .sidebar-left-modes {
+    display: none !important;
+  }
+}
+
+/* Show bottom mode bar only on very small screens */
+@media (min-width: 400px) {
+  .bottom-mode-bar-mobile {
+    display: none !important;
+  }
+}
+
+/* Hide top buttons row on larger screens */
+@media (min-width: 400px) {
+  .top-buttons-mobile {
+    display: none !important;
+  }
+}
+
+/* Hide bottom buttons row on very small screens */
+@media (max-width: 400px) {
+  .bottom-buttons-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .xs-grid-1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+  @media (max-width: 340px) {
+    .rings-container .ring-item:nth-child(n+6) {
+      display: none; 
+    }
+  }
+
+  

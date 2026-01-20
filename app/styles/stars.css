@@ -1,0 +1,88 @@
+/* Optimized Star Animations */
+
+/* GPU-accelerated keyframe animation */
+@keyframes star-breathe {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate3d(0, -2px, 0) scale(1.1);
+  }
+}
+
+/* Star animation class */
+.star-breathe {
+  animation: star-breathe infinite ease-in-out;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Alternative subtle animation for subtle effects */
+@keyframes star-fade {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.star-fade {
+  animation: star-fade infinite ease-in-out;
+  will-change: opacity;
+  backface-visibility: hidden;
+}
+
+/* Twinkling stars animation */
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  75% {
+    opacity: 0.9;
+  }
+}
+
+.star-twinkle {
+  animation: star-twinkle infinite ease-in-out;
+  will-change: opacity;
+  backface-visibility: hidden;
+}
+
+/* Pulse animation for accent stars */
+@keyframes star-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(0, -1px, 0) scale(1.05);
+  }
+}
+
+.star-pulse {
+  animation: star-pulse infinite ease-in-out;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+/* Performance tip: Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .star-breathe,
+  .star-fade,
+  .star-twinkle,
+  .star-pulse {
+    animation: none !important;
+    opacity: 0.5;
+  }
+}
