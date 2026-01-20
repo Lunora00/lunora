@@ -108,10 +108,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const billingInfo = useMemo(() => {
     if (!nextBillingDate) return { formattedDate: "N/A", daysLeft: null };
+const date = (() => {
+  const raw = nextBillingDate as any;
+  return raw?.toDate ? raw.toDate() : new Date(raw);
+})();
 
-    const date = nextBillingDate instanceof Date 
-      ? nextBillingDate 
-      : (nextBillingDate as any).toDate?.() || new Date();
 
     const today = new Date();
     const diffTime = date.getTime() - today.getTime();
