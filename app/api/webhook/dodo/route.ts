@@ -1,6 +1,9 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+
 import { NextResponse } from "next/server";
 import DodoPayments from "dodopayments";
-import { adminDb } from "@/lib/firebase-admin";
 
 const client = new DodoPayments({
   bearerToken: process.env.DODO_PAYMENTS_API_KEY_LIVE!,
@@ -10,6 +13,8 @@ const client = new DodoPayments({
 
 export async function POST(req: Request) {
   try {
+      const { adminDb } = await import("@/lib/firebase-admin");
+
     // 1️⃣ Raw body exactly as received for signature verification
     const rawBody = await req.text();
 
