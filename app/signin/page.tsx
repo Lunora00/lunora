@@ -3,7 +3,7 @@ import React from 'react';
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import Image from 'next/image';
 import LoadingScreen from '../LoadingScreen';
 
@@ -31,15 +31,24 @@ const handleNavigate = (path: string) => {
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
+        // Always lowercase email for consistency with webhook matching
         await setDoc(userRef, {
           name: user.displayName,
-          email: user.email,
+          email: user.email?.toLowerCase() || user.email,
           plan: "free",
-          isPro:false,
+          isPro: false,
           usedSessions: 0,
           createdAt: serverTimestamp(),
           mascot: "normal", // Set your default mascot here
         });
+      } else {
+        // Update email to lowercase if it exists (for existing users)
+        const existingData = userSnap.data();
+        if (existingData.email && existingData.email !== existingData.email.toLowerCase()) {
+          await updateDoc(userRef, {
+            email: existingData.email.toLowerCase(),
+          });
+        }
       }
 
       // Step C: Redirect to the main page

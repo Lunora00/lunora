@@ -36,15 +36,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ received: true }); 
     }
 
-    // Search for your existing user document by email
-    const userQuery = await adminDb
+    // Search for user by email (lowercased for consistency)
+    // Also check by dodoCustomerId if provided (for existing customers)
+    let userQuery = await adminDb
       .collection("users")
       .where("email", "==", customerEmail)
       .limit(1)
       .get();
 
+    // If not found by email, try by dodoCustomerId (if provided)
+    if (userQuery.empty && data.customer?.customer_id) {
+      userQuery = await adminDb
+        .collection("users")
+        .where("dodoCustomerId", "==", data.customer.customer_id)
+        .limit(1)
+        .get();
+    }
+
     if (userQuery.empty) {
-      console.error(`❌ No user found in Firebase with email: ${customerEmail}`);
+      console.error(`❌ No user found in Firebase with email: ${customerEmail} or customer_id: ${data.customer?.customer_id}`);
       return NextResponse.json({ received: true }); // Return 200 so Dodo stops retrying
     }
 
@@ -74,8 +84,8 @@ const isCancelIntent =
   data.status === "cancelled"; 
 
   const PLAN_MAP: Record<string, string> = {
-    "pdt_0NVTHGayLXd7ghjE3rTXA": "pro_monthly",
-    "pdt_0NVTHUn903k4Yb0fJk0Gf": "pro_yearly",
+    "pdt_0NVGMdYrRLYZVW8zjRUpH": "pro_monthly",
+    "pdt_0NVOuE093HckAmrSxGL2z": "pro_yearly",
   };
 
   const planName = PLAN_MAP[data.product_id] || "unknown_plan";

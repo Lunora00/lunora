@@ -17,7 +17,7 @@ export const useAuth = () => {
                     const cached = await getUserFromIndexedDB(uid);
                     if (cached) {
                         setCachedUser(cached);
-                        setLoading(false); // Show cached data immediately
+                        // Don't set loading=false here - wait for Firebase verification
                     }
                 }
             } catch (error) {
@@ -45,6 +45,7 @@ export const useAuth = () => {
                 }
             } else {
                 localStorage.removeItem("firebaseUID");
+                setCachedUser(null); // Clear cache if Firebase says logged out
             }
             
             setLoading(false);
@@ -52,8 +53,10 @@ export const useAuth = () => {
         return () => unsubscribe();
     }, []);
 
-    // Use real user if available, fallback to cached
-    const currentUser = user || cachedUser;
+    // Use real Firebase user if available
+    // Only use cached user if Firebase hasn't verified yet (user is null but still loading)
+    // If Firebase verified and user is null, don't trust cache (user logged out)
+    const currentUser = user !== null ? user : (loading ? cachedUser : null);
     const provider = user?.providerData?.[0];
 
     const session = currentUser ? {

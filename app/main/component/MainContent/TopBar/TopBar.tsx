@@ -53,7 +53,7 @@ const TopBarHero: React.FC<TopBarHeroProps> = ({
   const MASCOTS = {
     normal: { image: "/normal1.png", label: "Rookie" },
     leader: { image: "/leader1.png", label: "Alpha" },
-    careless: { image: "/carefree1.png", label: "Rebel" },
+    careless: { image: "/Carefree1.png", label: "Rebel" },
     nerds: { image: "/nerds1.png", label: "Scholar" },
     teacherpet: { image: "/teacherpet1.png", label: "Acer" },
     athelete: { image: "/athletes1.png", label: "Champ" },

@@ -44,7 +44,7 @@ type Session = {
 const MASCOTS = {
   normal: { image: "/normal1.png", label: "Rookie", requirement: 0 },
   leader: { image: "/leader1.png", label: "Alpha", requirement: 6 },
-  careless: { image: "/carefree1.png", label: "Rebel", requirement: 12 },
+  careless: { image: "/Carefree1.png", label: "Rebel", requirement: 12 },
   nerds: { image: "/nerds1.png", label: "Scholar", requirement: 18 },
   teacherpet: { image: "/teacherpet1.png", label: "Acer", requirement: 30 },
   athelete: { image: "/athletes1.png", label: "Champ", requirement: 40 },
