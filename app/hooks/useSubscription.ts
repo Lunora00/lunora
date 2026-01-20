@@ -20,7 +20,15 @@ export interface SubscriptionData {
 
 export type Plan = "free" | "pro_monthly" | "pro_yearly";
 
-export const useSubscription = () => {
+export const useSubscription = (): {
+  plan: Plan;
+  isPro: boolean;
+  dodoCustomerId: string | null;
+  userid: string | undefined;
+  loading: boolean;
+  nextBillingDate: Date | Timestamp | null;
+} => {
+  
   const { data: session, status } = useSession();
   const [plan, setPlan] = useState<Plan>("free");
   const [isPro, setIsPro] = useState(false); // 👈 Explicit state for isPro
