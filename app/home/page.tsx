@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,8 @@ import LoadingScreen from "../LoadingScreen";
 
 export default function LandingPage() {
   const router = useRouter();
+  const uid = useId();
+  const navMaskId = `lunora-moon-${uid}`;
   const [user, setUser] = useState<any>(null);
   const [pageLoading, setPageLoading] = useState(false);
 
@@ -156,7 +158,7 @@ export default function LandingPage() {
               className="absolute left-0 rotate-[40deg] w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] md:w-[70px] md:h-[70px] lg:w-[90px] lg:h-[90px]"
             >
               <defs>
-                <mask id="lunora-moon">
+                <mask id={navMaskId}>
                   <rect width="100" height="100" fill="white" />
                   <circle cx="56" cy="50" r="40" fill="black" />
                 </mask>
@@ -166,7 +168,7 @@ export default function LandingPage() {
                 cy="50"
                 r="42"
                 fill="white"
-                mask="url(#lunora-moon)"
+                mask={`url(#${navMaskId})`}
               />
             </svg>
             <span className="text-white text-[24px] sm:text-[28px] md:text-[32px] lg:text-[40px] font-light tracking-wider pl-5 sm:pl-6 md:pl-7 lg:pl-8 pt-1 sm:pt-2">

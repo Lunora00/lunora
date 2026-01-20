@@ -1,7 +1,9 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 
-export default function LoadingScreen() {
+export default function LoadingScreen({ message }: { message?: string }) {
+  const uid = useId();
+  const maskId = `lunora-moon-loading-${uid}`;
 
   // Lock scroll while loader is mounted
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function LoadingScreen() {
           className="absolute left-0 rotate-[40deg] w-[100px] h-[100px] md:w-[110px] md:h-[110px] lg:w-[120px] lg:h-[120px]"
         >
           <defs>
-            <mask id="lunora-moon-loading">
+            <mask id={maskId}>
               <rect width="100" height="100" fill="white" />
               <circle cx="56" cy="50" r="40" fill="black" />
             </mask>
@@ -54,7 +56,7 @@ export default function LoadingScreen() {
             cy="50"
             r="42"
             fill="white"
-            mask="url(#lunora-moon-loading)"
+            mask={`url(#${maskId})`}
           />
         </svg>
 
@@ -67,6 +69,12 @@ export default function LoadingScreen() {
           </span>
         </span>
       </div>
+
+      {message ? (
+        <div className="absolute bottom-10 text-white/70 text-xs sm:text-sm font-semibold tracking-wider">
+          {message}
+        </div>
+      ) : null}
 
       {/* === Animations === */}
       <style jsx>{`

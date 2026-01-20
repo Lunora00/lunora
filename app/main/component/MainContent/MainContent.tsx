@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useId } from "react";
 import TopBar from "./TopBar/TopBar";
 import RecentSessions from "./RecentSessions";
 import { useAllSessions, SessionEntry } from "@/app/hooks/useAllSessions";
@@ -66,6 +66,8 @@ const MainContent: React.FC<MainContentProps> = ({
   handleChangeName,
   handleDeleteAllSessions,
 }) => {
+  const uid = useId();
+  const footerMaskId = `footer-moon-${uid}`;
   const [stars, setStars] = useState<any[]>([]);
   const [footerStars, setFooterStars] = useState<any[]>([]);
   const [recentSessionStars,setrecentSessionStars] =  useState<any[]>([]);
@@ -248,7 +250,7 @@ const MainContent: React.FC<MainContentProps> = ({
                   aria-hidden="true"
                 >
                   <defs>
-                    <mask id="footer-moon">
+                    <mask id={footerMaskId}>
                       <rect width="100" height="100" fill="white" />
                       <circle cx="56" cy="50" r="40" fill="black" />
                     </mask>
@@ -258,7 +260,7 @@ const MainContent: React.FC<MainContentProps> = ({
                     cy="50"
                     r="42"
                     fill="white"
-                    mask="url(#footer-moon)"
+                    mask={`url(#${footerMaskId})`}
                   />
                 </svg>
 

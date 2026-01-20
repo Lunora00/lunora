@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo, useId } from "react";
 import { Flame, History, Star, BookOpen } from "lucide-react";
 import { useSubscription } from "@/app/hooks/useSubscription";
 import { UpgradeModal } from "./UpgradeModal";
@@ -33,6 +33,8 @@ const TopBarHero: React.FC<TopBarHeroProps> = ({
   handleCreateNew,
   handleSignOut,
 }) => {
+  const uid = useId();
+  const logoMaskId = `lunora-moon-${uid}`;
 
 
 
@@ -165,7 +167,7 @@ useEffect(() => {
               className="absolute left-0 rotate-[40deg] w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] md:w-[70px] md:h-[70px] lg:w-[90px] lg:h-[90px]"
             >
               <defs>
-                <mask id="lunora-moon">
+                <mask id={logoMaskId}>
                   <rect width="100" height="100" fill="white" />
                   <circle cx="56" cy="50" r="40" fill="black" />
                 </mask>
@@ -175,7 +177,7 @@ useEffect(() => {
                 cy="50"
                 r="42"
                 fill="white"
-                mask="url(#lunora-moon)"
+                mask={`url(#${logoMaskId})`}
               />
             </svg>
             <span className="text-white text-[24px] sm:text-[28px] md:text-[32px] lg:text-[40px] font-light tracking-wider pl-5 sm:pl-6 md:pl-7 lg:pl-8 pt-1 sm:pt-2">
