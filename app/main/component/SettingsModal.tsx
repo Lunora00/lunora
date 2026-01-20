@@ -106,27 +106,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     });
   }, [session?.user?.createdAt]);
 
-  const billingInfo = useMemo(() => {
-    if (!nextBillingDate) return { formattedDate: "N/A", daysLeft: null };
-const date = (() => {
-  const raw = nextBillingDate as any;
-  return raw?.toDate ? raw.toDate() : new Date(raw);
-})();
-
-
-    const today = new Date();
-    const diffTime = date.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    return {
-      formattedDate: date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-      daysLeft: diffDays > 0 ? diffDays : 0,
-    };
-  }, [nextBillingDate]);
 
   useEffect(() => {
     setSelectedMascot(mascot || "normal");
@@ -426,18 +405,8 @@ const date = (() => {
                       <span className="text-[8px] md:text-[9px] uppercase tracking-widest text-white/30 mb-1">
                         Expire On
                       </span>
-                      <span className="text-lg md:text-xl font-black italic tracking-tight text-white">
-                        {billingInfo.formattedDate}
-                      </span>
                     </div>
 
-                    {billingInfo.daysLeft !== null && (
-                      <div className="flex items-center gap-2 px-2.5 py-1">
-                        <span className="text-[8px] md:text-[9px] font-black uppercase tracking-tight text-gray-500">
-                          {billingInfo.daysLeft} Days Left
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
