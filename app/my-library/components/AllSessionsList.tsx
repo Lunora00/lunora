@@ -320,9 +320,6 @@ const handleNavigation = (path: string) => {
                 {/* Animated Loading Circle */}
                 <div className="mb-8 sm:mb-10 md:mb-12">
                   <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32">
-                    {/* Outer rotating circle */}
-                    <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-blue-400 border-r-blue-400 animate-spin" 
-                         style={{ animationDuration: '2s' }} />
                     {/* Inner circle */}
                     <div className="absolute inset-3 sm:inset-4 rounded-full border border-white/10" />
                     {/* Center icon */}
@@ -332,27 +329,28 @@ const handleNavigation = (path: string) => {
                   </div>
                 </div>
 
-                <p className="text-white/70 font-bold text-sm sm:text-base md:text-lg mb-3">Getting your books</p>
+                <p className="text-white/70 font-bold text-sm sm:text-base md:text-lg mb-3">No Testbook Yet</p>
                 <p className="text-white/50 font-medium text-xs sm:text-sm mb-8 max-w-sm">
                   Create your first testbook to start studying
                 </p>
 
-                <button
-                  onClick={() => handleNavigation("/create-new")}
-                  className={`px-8 sm:px-10 md:px-12 py-3 sm:py-3.5 md:py-4 rounded-full 
-                 bg-gradient-to-r from-blue-600 to-blue-500 text-white
-                 font-bold text-xs sm:text-sm tracking-wide
-                 hover:shadow-lg hover:shadow-blue-500/40 hover:scale-105
-                 active:scale-95 transition-all cursor-pointer
-                 flex items-center gap-2 sm:gap-3`}
-                >
-                  <LucideIcons.Plus
-                    size={16}
-                    className="sm:w-[18px] sm:h-[18px] md:w-5 md:h-5"
-                    strokeWidth={3}
-                  />
-                  CREATE FIRST TESTBOOK
-                </button>
+               <button
+  onClick={() => handleNavigation("/create-new")}
+  className={`px-8 sm:px-10 md:px-12 py-3 sm:py-3.5 md:py-4 rounded-full
+    bg-white text-[#1A3956]
+    font-black text-xs sm:text-sm tracking-wide
+    hover:bg-white/90 hover:shadow-xl hover:shadow-black/20 hover:scale-105
+    active:scale-95 transition-all cursor-pointer
+    flex items-center gap-2 sm:gap-3`}
+>
+  <LucideIcons.Plus
+    size={16}
+    className="sm:w-[18px] sm:h-[18px] md:w-5 md:h-5"
+    strokeWidth={3}
+  />
+  Create First Testbook
+</button>
+
               </div>
             )}
           </div>
