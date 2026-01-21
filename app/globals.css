@@ -2,12 +2,14 @@
 
 
 /* You can uncomment one at a time to test */
-* {
-  /* Modern & Geometric */
+.logo-text {
   font-family: "Montserrat", sans-serif !important; 
-  /* font-family: "Raleway", sans-serif !important; */
 
 }
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+}
+
 
 
 
@@ -153,9 +155,6 @@
   }
 }
 
-/* BASE STYLES */
-.logo-moon { width: 45px; height: 45px; }
-.logo-text { font-size: 28px; padding-left: 28px; }
 
 .stats-dashboard {
   margin-top: 40px;

@@ -60,7 +60,7 @@ export default function LoadingScreen() {
           />
         </svg>
 
-        <span className="text-white text-[32px] md:text-[36px] lg:text-[44px] font-light tracking-wider pl-8 md:pl-8 lg:pl-10 pt-2 flex items-center">
+        <span className="text-white logo-text text-[32px] md:text-[36px] lg:text-[44px] font-light tracking-wider pl-8 md:pl-8 lg:pl-10 pt-2 flex items-center">
           lunora
           <span className="ml-2 mt-3 sm:mt-5 flex gap-[4px] pt-[6px]">
             <span className="dot dot-1" />

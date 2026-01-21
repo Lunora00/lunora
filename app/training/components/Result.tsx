@@ -72,28 +72,28 @@ const handleExitToDashboard = () => {
 const getConfig = () => {
   if (percentage >= 90) return {
     bgColor: "#E19E01",
-    title: "GOLD STAR",
+    title: "Gold Star",
     subtitle: `Perfect, ${userName}!`,
     glow: "rgba(254, 240, 138, 0.4)", // yellow-200
     iconColor: "#FACC15",            // yellow-400
   };
   if (percentage >= 70) return {
     bgColor: "#4B5563",              // Sightly darker gray for better contrast
-    title: "SILVER STAR",
+    title: "Silver Star",
     subtitle: `Great work, ${userName}!`,
     glow: "rgba(243, 244, 246, 0.3)", // gray-100
     iconColor: "#D1D5DB",            // gray-300
   };
   if (percentage >= 50) return {
     bgColor: "#8E4805", 
-    title: "BRONZE STAR",
+    title: "Bronze Star",
     subtitle: `Solid effort, ${userName}!`,
     glow: "rgba(227, 175, 102, 0.3)", // bronze light
     iconColor: "#CD7F32",            // metallic bronze
   };
   return {
     bgColor: "#B60A06", 
-    title: "NEED REVIEW",
+    title: "Need Review",
     subtitle: `Keep going, ${userName}.`,
     glow: "rgba(248, 113, 113, 0.4)", // red-400
     iconColor: "#EF4444",            // red-500
@@ -179,7 +179,7 @@ const getConfig = () => {
 
       {/* Result Text */}
       <div className="text-center mb-8 space-y-2">
-        <h1 className="text-[2.25rem] font-black tracking-tight italic uppercase leading-none">
+        <h1 className="text-[2.25rem] font-black tracking-tight italic leading-none">
           {config.title}
         </h1>
         <div className="flex items-center justify-center gap-4 py-1">

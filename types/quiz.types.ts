@@ -43,6 +43,33 @@ export interface SessionData {
     content?: string;
 }
 
+export interface Session {
+    id: string;
+    userId: string;
+    userName: string;
+    topic: string;
+
+    questionlist: Question[];
+
+    completedQuestions: number;
+    correctAnswers: number;
+    totalQuestions: number;
+
+    subtopicPerformance: Record<string, SubtopicPerformance>;
+
+    allAttempts?: LastPracticeMetrics[];
+
+    isCompleted?: boolean;
+    score?: number;
+    lastAttemptedDate?: Date | Timestamp;
+
+    createdAt: Date | Timestamp;
+    updatedAt: Date | Timestamp;
+
+    content?: string;
+}
+
+
 
 export interface LastPracticeMetrics {
   lastScorePercentage: number;

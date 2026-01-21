@@ -220,9 +220,10 @@ const handleResetAction = async (sess: Session) => {
                     <MasterMoon accuracy={accuracy} />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-white font-bold text-sm sm:text-base uppercase truncate leading-tight">
-                      {sess.topic}
-                    </h4>
+               <h4 className="text-white font-bold text-sm sm:text-base truncate leading-tight">
+  {sess.topic?.charAt(0).toUpperCase() + sess.topic?.slice(1)}
+</h4>
+
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-white/50 text-[10px] sm:text-xs mt-1.5">
                       {sess.subject && (
                         <>
@@ -230,7 +231,7 @@ const handleResetAction = async (sess: Session) => {
                           <span className="text-white/20">•</span>
                         </>
                       )}
-                      <span>Last: {formatDate(latestAttempt)}</span>
+                      <span>Last Attempt: {formatDate(latestAttempt)}</span>
                       <span className="text-white/20">•</span>
                       <span>Created: {formatDate(sess.createdAt)}</span>
                     </div>

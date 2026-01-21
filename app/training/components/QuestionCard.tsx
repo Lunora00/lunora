@@ -67,7 +67,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             <button className="group flex flex-col items-start text-left outline-none w-full">
               
               <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 w-full">
-                <h1 className="truncate text-xl font-black tracking-tighter text-black uppercase m-0 leading-tight">
+                <h1 className="truncate text-xl font-black tracking-tighter text-black  m-0 leading-tight">
                   {truncateSubtopic(question.subtopic || "Logic", screenSize)}
                 </h1>
 

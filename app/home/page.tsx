@@ -171,7 +171,7 @@ export default function LandingPage() {
                 mask={`url(#${navMaskId})`}
               />
             </svg>
-            <span className="text-white text-[24px] sm:text-[28px] md:text-[32px] lg:text-[40px] font-light tracking-wider pl-5 sm:pl-6 md:pl-7 lg:pl-8 pt-1 sm:pt-2">
+            <span className="text-white logo-text text-[24px] sm:text-[28px] md:text-[32px] lg:text-[40px] font-light tracking-wider pl-5 sm:pl-6 md:pl-7 lg:pl-8 pt-1 sm:pt-2">
               lunora
             </span>
           </div>
@@ -583,7 +583,7 @@ export default function LandingPage() {
                 mask="url(#footer-moon)"
               />
             </svg>
-            <span className="text-white text-[40px] sm:text-[50px] md:text-[65px] lg:text-[80px] font-light tracking-wider pl-0 sm:pl-7 md:pl-7.5 lg:pl-8">
+            <span className="text-white logo-text text-[40px] sm:text-[50px] md:text-[65px] lg:text-[80px] font-light tracking-wider pl-0 sm:pl-7 md:pl-7.5 lg:pl-8">
               lunora
             </span>
           </div>

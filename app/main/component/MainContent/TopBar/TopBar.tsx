@@ -180,7 +180,7 @@ useEffect(() => {
                 mask={`url(#${logoMaskId})`}
               />
             </svg>
-            <span className="text-white text-[24px] sm:text-[28px] md:text-[32px] lg:text-[40px] font-light tracking-wider pl-5 sm:pl-6 md:pl-7 lg:pl-8 pt-1 sm:pt-2">
+            <span className="text-white logo-text text-[24px] sm:text-[28px] md:text-[32px] lg:text-[40px] font-light tracking-wider pl-5 sm:pl-6 md:pl-7 lg:pl-8 pt-1 sm:pt-2">
               lunora
             </span>
           </div>

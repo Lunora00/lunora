@@ -43,7 +43,7 @@ const Step1SubjectInput: React.FC<Step1SubjectInputProps> = ({
 
   {/* Title - Clean White */}
   <h3 className="text-3xl sm:text-4xl font-extrabold text-center tracking-tight text-white mb-10 relative z-10 drop-shadow-sm">
-    What subject are you training on?
+    What subject are you studying on?
   </h3>
 
   {/* Input Container */}
