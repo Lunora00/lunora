@@ -86,8 +86,8 @@ const AnswerOptions: React.FC<AnswerOptionsProps> = ({
 
             {/* Text Content */}
             <div className="flex-1 min-w-0">
-              <div className={` cursor-pointer text-[15px] font-serif leading-relaxed whitespace-normal break-words ${textStyle} transition-colors duration-200`}>
-                <span className="inline-block w-5 sm:w-6  text-[11px] font-mono text-stone-400 align-baseline">
+              <div className={` cursor-pointer text-[15px] leading-relaxed whitespace-normal break-words ${textStyle} transition-colors duration-200`}>
+                <span className="inline-block w-5 sm:w-6  text-[11px]  text-stone-400 align-baseline">
                   {String.fromCharCode(65 + index)}.
                 </span>
                 {cleanedOption}

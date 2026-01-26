@@ -200,7 +200,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[200] text-white flex flex-col font-sans"
+      className="fixed inset-0 z-[200] text-white flex flex-col"
       style={{
         background: "linear-gradient(to bottom, #0D1821 0%, #020406 100%)",
       }}

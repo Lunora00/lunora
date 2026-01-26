@@ -1,13 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
+
 
 
 /* You can uncomment one at a time to test */
 .logo-text {
-  font-family: "Montserrat", sans-serif !important; 
+  font-family: "Quicksand" !important; 
 
 }
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+  font-family: "Quicksand" !important;
 }
 
 

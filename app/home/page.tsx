@@ -212,7 +212,7 @@ export default function LandingPage() {
               {/* LEFT TEXT */}
               <div
                 className={`
-    w-full md:w-[45%]
+    w-full md:w-[60%]
     text-left
     mb-0  md:pt-8 lg:pt-19
     max-[700px]:text-center
@@ -222,7 +222,7 @@ export default function LandingPage() {
                 <h1
                   className={`
       text-white font-bold leading-tight
-      text-3xl md:text-4xl lg:text-5xl
+      text-3xl md:text-4xl lg:text-6xl
       mb-3 sm:mb-4 md:mb-6
       max-[700px]:mx-auto
     `}

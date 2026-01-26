@@ -58,7 +58,7 @@ const NavigationControls: React.FC<NavigationControlsProps> = ({
             bg-slate-50
             
             border border-slate-200
-            italic normal-case font-serif tracking-normal
+            italic normal-case  tracking-normal
             text-slate-700 text-sm
           "
           >

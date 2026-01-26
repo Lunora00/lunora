@@ -53,7 +53,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   }, []);
 
   return (
-<div className="flex-1 min-h-0 flex flex-col bg-[#FDFDFD] text-stone-900 font-sans relative">
+<div className="flex-1 min-h-0 flex flex-col bg-[#FDFDFD] text-stone-900  relative">
 
   <header className="w-full relative bg-white/50 backdrop-blur-sm">
     <div className="pl-10 sm:pl-8 md:pl-6 pr-6 sm:pr-8 md:pr-12 pt-3 sm:pt-3.5 md:pt-4 pb-4 sm:pb-5 md:pb-6">
@@ -99,7 +99,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             <p className="text-[8px] sm:text-[9px] font-bold uppercase text-stone-400 tracking-[0.15em] sm:tracking-[0.2em] mb-0">
               Sheet No.
             </p>
-            <p className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-stone-800 tabular-nums leading-none">
+            <p className="text-3xl sm:text-4xl md:text-5xl  font-light text-stone-800 tabular-nums leading-none">
               {String(currentQuestion + 1).padStart(2, "0")}
             </p>
           </div>
