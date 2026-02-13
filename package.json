@@ -23,6 +23,7 @@
     "next-auth": "^4.24.13",
     "node-fetch": "^3.3.2",
     "openai": "^5.23.0",
+    "posthog-js": "^1.347.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",

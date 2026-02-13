@@ -1,6 +1,12 @@
 import { Supadata, SupadataError } from "@supadata/js";
 
-const API_KEY = process.env.NEXT_PUBLIC_SUPADATA_API_KEY!;
+const API_KEYS = [
+  process.env.NEXT_PUBLIC_SUPADATA_API_KEY,
+  process.env.NEXT_PUBLIC_SUPADATA_API_KEY_1,
+  process.env.NEXT_PUBLIC_SUPADATA_API_KEY_2,
+  process.env.NEXT_PUBLIC_SUPADATA_API_KEY_3,
+  process.env.NEXT_PUBLIC_SUPADATA_API_KEY_4,
+].filter(Boolean) as string[];
 
 export type SourceType = "youtube" | "social" | "web";
 
@@ -11,56 +17,66 @@ export interface PageTextResult {
 }
 
 export class SupadataService {
-  private supadata: Supadata;
+  private clients: Supadata[];
 
   constructor() {
-    if (!API_KEY) {
-      throw new Error("SUPADATA API KEY missing");
+    if (API_KEYS.length === 0) {
+      throw new Error("No Supadata API keys found");
     }
 
-    this.supadata = new Supadata({
-      apiKey: API_KEY,
-    });
+    this.clients = API_KEYS.map(
+      (key) =>
+        new Supadata({
+          apiKey: key,
+        })
+    );
   }
 
-  // ✅ KEEP THIS — your app expects it
+  // ✅ KEEP THIS
   async processUrl(url: string): Promise<PageTextResult> {
     return this.extractTextFromUrl(url);
   }
 
-  // 🔥 MAIN ENTRY
+  // 🔥 MAIN ENTRY WITH FALLBACK
   async extractTextFromUrl(url: string): Promise<PageTextResult> {
-    try {
-      if (this.isVideoOrSocial(url)) {
-        return await this.extractTranscript(url);
+    let lastError: any;
+
+    for (const client of this.clients) {
+      try {
+        if (this.isVideoOrSocial(url)) {
+          return await this.extractTranscript(client, url);
+        }
+
+        return await this.extractWebPage(client, url);
+
+      } catch (error) {
+        console.warn("Supadata key failed, trying next...");
+        lastError = error;
       }
-
-      return await this.extractWebPage(url);
-
-    } catch (error) {
-      console.error("Supadata error:", error);
-
-      if (error instanceof SupadataError) {
-        throw new Error(error.message);
-      }
-
-      throw new Error("Failed to extract text from URL");
     }
+
+    if (lastError instanceof SupadataError) {
+      throw new Error(lastError.message);
+    }
+
+    throw new Error("All Supadata API keys failed");
   }
 
   // ----------------------------
   // VIDEO / SOCIAL TRANSCRIPT
   // ----------------------------
-  private async extractTranscript(url: string): Promise<PageTextResult> {
-    let result: any = await this.supadata.transcript({
+  private async extractTranscript(
+    client: Supadata,
+    url: string
+  ): Promise<PageTextResult> {
+    let result: any = await client.transcript({
       url,
       text: true,
       mode: "auto",
     });
 
-    // Handle async job
     if (result && "jobId" in result) {
-      result = await this.waitForTranscript(result.jobId);
+      result = await this.waitForTranscript(client, result.jobId);
     }
 
     if (!result?.content) {
@@ -77,13 +93,16 @@ export class SupadataService {
   }
 
   // ----------------------------
-  // SINGLE WEB PAGE SCRAPE
+  // WEB PAGE SCRAPE
   // ----------------------------
-  private async extractWebPage(url: string): Promise<PageTextResult> {
-    const page = await this.supadata.web.scrape(url);
+  private async extractWebPage(
+    client: Supadata,
+    url: string
+  ): Promise<PageTextResult> {
+    const page = await client.web.scrape(url);
 
     if (!page?.content || page.content.trim().length === 0) {
-      throw new Error("No readable content found on page");
+      throw new Error("No readable content found");
     }
 
     return {
@@ -96,10 +115,10 @@ export class SupadataService {
   // ----------------------------
   // HELPERS
   // ----------------------------
-  private async waitForTranscript(jobId: string) {
+  private async waitForTranscript(client: Supadata, jobId: string) {
     while (true) {
       await this.sleep(2000);
-      const job = await this.supadata.transcript.getJobStatus(jobId);
+      const job = await client.transcript.getJobStatus(jobId);
 
       if (job.status === "completed") return job.result;
       if (job.status === "failed") {

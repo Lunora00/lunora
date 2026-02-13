@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
+import PosthogProvider from "../lib/PosthogProvider"
 export const metadata: Metadata = {
   title: "Lunora Ai",
   description: "Learn it -> Quiz it -> Master it",
@@ -31,6 +32,9 @@ export default function RootLayout({
             gtag('config', 'G-MC14D44PWG');
           `}
         </Script>
+
+        {/* PostHog init */}
+        <PosthogProvider />
 
         {children}
       </body>
