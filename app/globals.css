@@ -1,15 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 
-
-/* You can uncomment one at a time to test */
-.logo-text {
-  font-family: "Quicksand" !important; 
-
-}
-body {
-  font-family: "Quicksand" !important;
+@layer base {
+  html, body {
+    font-family: var(--font-dm), sans-serif;
+  }
 }
 
 
@@ -128,16 +123,7 @@ body {
   }
 }
 
-@keyframes breathe {
-  0%, 100% { 
-    opacity: 0.2; 
-    transform: scale(0.7) rotate(0deg); 
-  }
-  50% { 
-    opacity: 1; 
-    transform: scale(1.1) rotate(90deg); 
-  }
-}
+
 
 @keyframes hideTopbarStats {
   from {

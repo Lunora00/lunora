@@ -31,8 +31,12 @@ const TopBar: React.FC<TopBarProps> = ({
   const [pageLoading, setPageLoading] = React.useState(false);
   const router = useRouter();
 
-  const formattedSubject =
-    subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase();
+const decodedSubject = decodeURIComponent(subject);
+
+const formattedSubject =
+  decodedSubject.charAt(0).toUpperCase() +
+  decodedSubject.slice(1).toLowerCase();
+
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

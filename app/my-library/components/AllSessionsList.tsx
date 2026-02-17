@@ -130,7 +130,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
             fontSize="5"
             fontWeight="600"
             letterSpacing="2"
-            style={{ fontFamily: "ui-rounded, system-ui, sans-serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
             TESTBOOK
           </text>

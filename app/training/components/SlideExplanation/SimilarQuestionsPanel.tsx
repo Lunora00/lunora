@@ -207,7 +207,7 @@ export const SimilarQuestionsPanel: React.FC<SimilarQuestionsPanelProps> = ({
 
             <style jsx global>{`
                 * {
-                    font-family: "Comic Sans MS", cursive, sans-serif !important;
+                    font-family: "DM Sans", sans-serif !important;
                 }
                 .hide-scrollbar::-webkit-scrollbar {
                     display: none;

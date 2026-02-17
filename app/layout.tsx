@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
-import PosthogProvider from "../lib/PosthogProvider"
+import { DM_Sans } from "next/font/google";
+import PosthogProvider from "../lib/PosthogProvider";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-dm",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Lunora Ai",
   description: "Learn it -> Quiz it -> Master it",
@@ -17,7 +26,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={dmSans.variable}>
+      <head>
+        {/* Preconnect stays unchanged */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>
         {/* Google Analytics */}
         <Script

@@ -259,67 +259,6 @@ const MainContent: React.FC<MainContentProps> = ({
             }}
           />
 
-          {/* FOOTER CONTENT */}
-          <div className="relative z-10 max-w-7xl mx-auto pt-32 sm:pt-40 md:pt-48 lg:pt-[196px] pr-6 sm:pr-10 md:pr-16 lg:pr-20 pb-6 sm:pb-7 md:pb-8 flex flex-col items-center text-center">
-            {/* BRAND */}
-            <div className="relative flex items-center select-none">
-              <svg
-                viewBox="0 0 100 100"
-                className="absolute left-[-8px] sm:left-[-10px] md:left-[-12px] lg:left-[-14px] rotate-[40deg] w-[70px] h-[70px] sm:w-[90px] sm:h-[90px] md:w-[110px] md:h-[110px] lg:w-[130px] lg:h-[130px]"
-                aria-hidden="true"
-              >
-                <defs>
-                  <mask id={footerMaskId}>
-                    <rect width="100" height="100" fill="white" />
-                    <circle cx="56" cy="50" r="40" fill="black" />
-                  </mask>
-                </defs>
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  fill="white"
-                  mask={`url(#${footerMaskId})`}
-                />
-              </svg>
-
-              <span className="text-white logo-text text-[40px] sm:text-[50px] md:text-[65px] lg:text-[80px] font-light tracking-wider pt-1 pl-5 sm:pl-6 md:pl-6.5 lg:pl-7">
-                lunora
-              </span>
-            </div>
-
-            {/* SOCIAL + LEGAL */}
-            <div className="flex flex-col sm:flex-row items-center pl-0 sm:pl-6 md:pl-8 lg:pl-10 justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 text-white/60 text-sm sm:text-base mt-4">
-              <div className="flex items-center gap-4 sm:gap-5 md:gap-6 text-sm sm:text-base">
-                <span
-                  onClick={() => {
-                    if (pageLoading) return;
-                    setPageLoading(true);
-                    router.push("/terms-and-conditions");
-                  }}
-                  className="hover:text-white active:scale-95 transition-transform  cursor-pointer"
-                >
-                  Terms
-                </span>
-
-                <span
-                  onClick={() => {
-                    if (pageLoading) return;
-                    setPageLoading(true);
-                    router.push("/privacy-policy");
-                  }}
-                  className="hover:text-white active:scale-95 transition-transform  cursor-pointer"
-                >
-                  Privacy
-                </span>
-              </div>
-            </div>
-
-            {/* COPYRIGHT */}
-            <p className="pt-4 sm:pt-5 pl-0 sm:pl-6 md:pl-7 lg:pl-9 text-center text-white/40 text-xs sm:text-sm md:text-base">
-              © 2024 Lunora. All rights reserved.
-            </p>
-          </div>
         </div>
       </div>
     </div>

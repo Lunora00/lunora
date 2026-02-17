@@ -273,7 +273,7 @@ const SheetSelector: React.FC<SheetSelectorProps> = ({
         fontSize="11"
         fontWeight="700"
         fill="#1E293B"
-        style={{ fontFamily: "serif" }}
+        style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         {wrappedLines.map((line, idx) => (
           <tspan 
