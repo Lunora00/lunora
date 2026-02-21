@@ -1,74 +1,147 @@
-// src/pages/TrainingPage.tsx - Updated Implementation
+// src/pages/TrainingPage.tsx
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth as useSession } from "../../hooks/useAuth";
 import { useSubscription } from "../../hooks/useSubscription";
 
-// Import other components and hooks (assuming paths remain the same)
 import QuestionCard from "../components/QuestionCard";
 import NavigationControls from "../components/NavigationControls";
 import { useQuizState } from "../../hooks/useQuizState";
 import { useSessionData } from "../../hooks/useSessionData";
 import { GeminiService } from "@/services/geminiService";
-import  SlideExplanation  from "../components/SlideExplanation/SlideExplanation";
+import SlideExplanation from "../components/SlideExplanation/SlideExplanation";
 import FeynMeter from "../components/FeynMeter";
 import { Question, SubtopicPerformance } from "@/types/quiz.types";
 import { Result } from "../components/Result";
 import { useAllSessions } from "@/app/hooks/useAllSessions";
 import SheetSelector from "../components/SheetSelector";
-import LoadingScreen from "../../LoadingScreen"
-// --- Data Structures & Helper Functions (Kept in TrainingPage for direct use) ---
+import LoadingScreen from "../../LoadingScreen";
+
+// --- Data Structures & Helper Functions ---
 type QuestionStatus = "correct" | "wrong" | "unanswered";
 interface ResultBox {
   status: QuestionStatus;
   indexInSubtopic: number;
 }
-// ----------------------------------------
 
-// 💡 HELPER: Calculates detailed status for ALL questions, grouped by subtopic (Kept here as it processes questions array)
+// ─────────────────────────────────────────────────────────────────────────────
+// INLINE correctness checker — works for all 6 question types
+// No external import needed — lives right here in the page.
+// ─────────────────────────────────────────────────────────────────────────────
+function resolveIsCorrect(
+  question: Question,
+  selectedAnswer: string,
+  selectedIndex: number
+): boolean {
+  const qType = (question as any).type || "Multiple Choice";
+
+  switch (qType) {
+    case "Multiple Choice":
+    case "True/False": {
+      // correctAnswer is a number index into options[]
+      return selectedIndex === (question.correctAnswer as unknown as number);
+    }
+
+    case "Fill in the Blank": {
+      // correctAnswer is the exact word/phrase string
+      const correct = String((question.correctAnswer as unknown) ?? "")
+        .trim()
+        .toLowerCase();
+      const user = (selectedAnswer ?? "").trim().toLowerCase();
+      return user !== "" && user === correct;
+    }
+
+    case "Short Answer": {
+      // No objective grading — give credit for any meaningful response (>5 chars)
+      // The model answer is shown to the user after they submit.
+      return (selectedAnswer ?? "").trim().length > 5;
+    }
+
+    case "Match the Following": {
+      // correctAnswer is number[] — one right-half index per left item
+      // selectedAnswer is JSON string like '{"0":2,"1":0,"2":3,"3":1}'
+      try {
+        const correctMap = question.correctAnswer as unknown as number[];
+        const userMap: Record<number, number> = JSON.parse(selectedAnswer || "{}");
+        return (
+          Array.isArray(correctMap) &&
+          correctMap.every((val, idx) => userMap[idx] === val)
+        );
+      } catch {
+        return false;
+      }
+    }
+
+    case "Sequence": {
+      // correctAnswer is number[] representing correct order of indices into options[]
+      // selectedAnswer is JSON string like '[2,0,3,1]'
+      try {
+        const correctOrder = question.correctAnswer as unknown as number[];
+        const userOrder: number[] = JSON.parse(selectedAnswer || "[]");
+        return (
+          Array.isArray(correctOrder) &&
+          JSON.stringify(userOrder) === JSON.stringify(correctOrder)
+        );
+      } catch {
+        return false;
+      }
+    }
+
+    default:
+      return selectedIndex === (question.correctAnswer as unknown as number);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const calculateAllSubtopicResults = (
   questions: Question[]
 ): Record<string, ResultBox[]> => {
   const allResults: Record<string, ResultBox[]> = {};
-
   const subtopicCounters: Record<string, number> = {};
 
   questions.forEach((q) => {
     const subtopic = q.subtopic || "General";
-    if (!allResults[subtopic]) {
-      allResults[subtopic] = [];
-    }
+    if (!allResults[subtopic]) allResults[subtopic] = [];
   });
 
   questions.forEach((q) => {
     const subtopic = q.subtopic || "General";
-
-    if (subtopicCounters[subtopic] === undefined) {
-      subtopicCounters[subtopic] = 0;
-    }
+    if (subtopicCounters[subtopic] === undefined) subtopicCounters[subtopic] = 0;
 
     let status: QuestionStatus = "unanswered";
-
     if (q.userAnswerIndex !== undefined && q.userAnswerIndex !== null) {
-      status = q.userAnswerIndex === q.correctAnswer ? "correct" : "wrong";
+      // For text-input types userAnswerIndex is stored as -1; use userAnswer string
+      const qType = (q as any).type || "Multiple Choice";
+      const isTextType =
+        qType === "Fill in the Blank" ||
+        qType === "Short Answer" ||
+        qType === "Match the Following" ||
+        qType === "Sequence";
+
+      if (isTextType) {
+        status = resolveIsCorrect(q, (q as any).userAnswer ?? "", -1)
+          ? "correct"
+          : "wrong";
+      } else {
+        status = q.userAnswerIndex === q.correctAnswer ? "correct" : "wrong";
+      }
     }
 
     allResults[subtopic].push({
       status,
       indexInSubtopic: subtopicCounters[subtopic],
     });
-
     subtopicCounters[subtopic]++;
   });
 
   return allResults;
 };
 
-// ----------------------------------------
-// 🔥 TRAINING PAGE COMPONENT
-// ----------------------------------------
-
+// ─────────────────────────────────────────────────────────────────────────────
+// TRAINING PAGE COMPONENT
+// ─────────────────────────────────────────────────────────────────────────────
 const TrainingPage = () => {
   const params = useParams();
   const router = useRouter();
@@ -100,7 +173,6 @@ const TrainingPage = () => {
   const handleReattempt = async () => {
     if (!sessionData) return;
     try {
-      // 1. Reset the session in Firestore
       const successId = await resetSessionForTraining({
         ...sessionData,
         id: sessionId,
@@ -110,7 +182,6 @@ const TrainingPage = () => {
 
       if (successId) {
         closeResult();
-        // 2. Reload page to clear all local hook states (quizState, etc.)
         window.location.reload();
       }
     } catch (error) {
@@ -122,30 +193,21 @@ const TrainingPage = () => {
     router.push("/main");
   };
 
-  // Inside TrainingPage component
-  const [isGeneratingExtra, setIsGeneratingExtra] = useState<string | null>(
-    null
-  );
+  const [isGeneratingExtra, setIsGeneratingExtra] = useState<string | null>(null);
   const { isPro } = useSubscription();
 
   const handleAddExtraQuestions = async (subtopicName: string) => {
-    // 1. Guard against empty data or simultaneous requests
     if (!sessionData || isGeneratingExtra) return;
-
     if (!isPro) {
       console.warn("Unauthorized: Pro subscription required to add questions.");
       return;
     }
-
     setIsGeneratingExtra(subtopicName);
-
     try {
-      // 3. Get existing question texts to avoid duplicates
       const existingTexts = questions
         .filter((q: any) => (q.subtopic || q.topic) === subtopicName)
         .map((q: any) => q.question);
 
-      // 4. Generate new questions via Gemini
       if (!sessionData.content) {
         console.error("Session content is not available");
         return;
@@ -157,13 +219,11 @@ const TrainingPage = () => {
         existingTexts
       );
 
-      // 5. Sync to Database + Local State
       if (newQuestions && newQuestions.length > 0) {
         await addExtraQuestionsToSession(newQuestions as any, subtopicName);
       }
     } catch (error) {
       console.error("Failed to add questions:", error);
-      // You could optionally set a local error state here to show a toast
     } finally {
       setIsGeneratingExtra(null);
     }
@@ -171,7 +231,6 @@ const TrainingPage = () => {
 
   // Computed values
   const index = quizState.state.currentQuestionIndex;
-
   const currentQuestionData =
     questions && questions.length > 0 && index < questions.length
       ? questions[index]
@@ -180,7 +239,6 @@ const TrainingPage = () => {
   const currentQuestion = currentQuestionData ? index + 1 : 0;
   const totalQuestions = questions.length;
 
-  // Derived Subtopic List and Performance Totals from Questions
   const { allSubtopics, subtopicPerformance } = useMemo(() => {
     const subtopicMap = new Map<string, number>();
     const dbPerformance = sessionData?.subtopicPerformance || {};
@@ -195,17 +253,12 @@ const TrainingPage = () => {
 
     for (const [subtopicName, totalCount] of subtopicMap.entries()) {
       calculatedSubtopics.push(subtopicName);
-
       const scoredData = dbPerformance[subtopicName] || {
         name: subtopicName,
         scored: 0,
         total: 0,
       };
-
-      mergedPerformance[subtopicName] = {
-        ...scoredData,
-        total: totalCount,
-      };
+      mergedPerformance[subtopicName] = { ...scoredData, total: totalCount };
     }
 
     return {
@@ -214,61 +267,60 @@ const TrainingPage = () => {
     };
   }, [questions, sessionData?.subtopicPerformance]);
 
-  // DERIVATION: Calculate detailed results for ALL subtopics
   const allSubtopicDetailedResults = useMemo(() => {
     if (!questions || questions.length === 0) return {};
     return calculateAllSubtopicResults(questions);
   }, [questions]);
 
-  // FeynMeter props computation
-  const currentSubtopicName = currentQuestionData?.subtopic || "General";
-
-  // Authentication check
+  // Auth check
   useEffect(() => {
     if (status === "loading") return;
-    if (status === "unauthenticated") {
-      router.push("/signin");
-    }
+    if (status === "unauthenticated") router.push("/signin");
   }, [status, router]);
 
-  // Check for session completion status upon data load & redirect
+  // Show result if session already completed
   useEffect(() => {
     if (!loading && sessionData && status === "authenticated") {
-      if ((sessionData as any).isCompleted) {
-        setShowResult(true);
-      }
+      if ((sessionData as any).isCompleted) setShowResult(true);
     }
   }, [loading, sessionData, status]);
 
-  // Load state when question index changes
+  // Restore answer state when navigating between questions
   useEffect(() => {
     if (!currentQuestionData) return;
 
     const hasAnswered =
       currentQuestionData.userAnswerIndex !== undefined &&
       currentQuestionData.userAnswerIndex !== null;
+
     if (hasAnswered) {
-      const isCorrect =
-        currentQuestionData.userAnswerIndex ===
-        currentQuestionData.correctAnswer;
-      const selectedAnswer =
-        (currentQuestionData as any).userAnswer ||
-        currentQuestionData.options[currentQuestionData.userAnswerIndex!];
+      const qType = (currentQuestionData as any).type || "Multiple Choice";
+      const isTextType =
+        qType === "Fill in the Blank" ||
+        qType === "Short Answer" ||
+        qType === "Match the Following" ||
+        qType === "Sequence";
+
+      // For text-input types: restore selectedAnswer from userAnswer string
+      const savedAnswer = isTextType
+        ? (currentQuestionData as any).userAnswer ?? ""
+        : (currentQuestionData as any).userAnswer ||
+          currentQuestionData.options[currentQuestionData.userAnswerIndex!];
+
+      const isCorrect = resolveIsCorrect(
+        currentQuestionData,
+        savedAnswer,
+        currentQuestionData.userAnswerIndex!
+      );
 
       if (
         !quizState.state.isAnswered ||
-        quizState.state.answer !== selectedAnswer
+        quizState.state.answer !== savedAnswer
       ) {
-        quizState.restoreAnswerState(
-          selectedAnswer,
-          isCorrect,
-          currentQuestionData
-        );
+        quizState.restoreAnswerState(savedAnswer, isCorrect, currentQuestionData);
       }
     } else {
-      if (quizState.state.isAnswered) {
-        quizState.resetQuestion();
-      }
+      if (quizState.state.isAnswered) quizState.resetQuestion();
     }
   }, [
     index,
@@ -287,7 +339,6 @@ const TrainingPage = () => {
 
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
-
       if ((question.subtopic || "General") === subtopicName) {
         if (count === subtopicQuestionIndex) {
           targetQuestionIndex = i;
@@ -302,30 +353,39 @@ const TrainingPage = () => {
     }
   };
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // handleAnswerSelect — correctness logic inlined, no external import
+  // ─────────────────────────────────────────────────────────────────────────
   const handleAnswerSelect = async (selectedAnswer: string) => {
     if (quizState.state.isAnswered || !currentQuestionData || !sessionData) {
-      console.warn(
-        "Attempted to select answer, but question data is missing or already answered."
-      );
+      console.warn("Attempted to select answer, but question data is missing or already answered.");
       return;
     }
 
-    const selectedIndex = currentQuestionData.options.indexOf(selectedAnswer);
-    const isCorrect = selectedIndex === currentQuestionData.correctAnswer;
+    const qType = (currentQuestionData as any).type || "Multiple Choice";
 
-    // 1. Update local quiz state
-    quizState.setAnswer(
+    // For index-based types, look up the option index.
+    // For text-input types (Fill, Short, Match, Sequence) use sentinel -1.
+    let selectedIndex = -1;
+    if (qType === "Multiple Choice" || qType === "True/False") {
+      selectedIndex = currentQuestionData.options.indexOf(selectedAnswer);
+    }
+
+    // Resolve correctness inline — no import needed
+    const isCorrect = resolveIsCorrect(
+      currentQuestionData,
       selectedAnswer,
-      selectedIndex,
-      isCorrect,
-      currentQuestionData
+      selectedIndex
     );
 
-    // 2. Compute NEW progress counters
+    // 1. Update local quiz UI state
+    quizState.setAnswer(selectedAnswer, selectedIndex, isCorrect, currentQuestionData);
+
+    // 2. Compute new progress counters
     const newCompleted = index + 1;
     const newCorrect = quizState.state.correctAnswers + (isCorrect ? 1 : 0);
 
-    // 3. Update the local question list
+    // 3. Update the local question list — persist the user's answer string
     const updatedQuestions = questions.map((q, i) => {
       if (i === index) {
         return {
@@ -337,7 +397,7 @@ const TrainingPage = () => {
       return q;
     });
 
-    // 4. Update DB via the robust function
+    // 4. Sync to IndexedDB + Firestore
     try {
       await updateSessionData(
         newCompleted,
@@ -353,7 +413,6 @@ const TrainingPage = () => {
 
   const handleNextQuestion = async () => {
     const newIndex = index + 1;
-
     if (newIndex < questions.length) {
       quizState.setQuestionIndex(newIndex);
     } else {
@@ -364,9 +423,7 @@ const TrainingPage = () => {
 
   const handlePreviousQuestion = () => {
     const newIndex = index - 1;
-    if (newIndex >= 0) {
-      quizState.setQuestionIndex(newIndex);
-    }
+    if (newIndex >= 0) quizState.setQuestionIndex(newIndex);
   };
 
   const overallCorrectAnswers = useMemo(() => {
@@ -400,47 +457,31 @@ const TrainingPage = () => {
     );
   }
 
- // Loading & Error State Guards
   if (status === "loading" || loading || !currentQuestionData) {
-    return (
-      <LoadingScreen />
-    );
+    return <LoadingScreen />;
   }
 
-  if (status === "unauthenticated") {
-    return null;
-
-  }
+  if (status === "unauthenticated") return null;
 
   return (
-<div className="flex h-[100dvh] max-h-[100dvh] overflow-hidden">
-      {/* 1. Left Side - FeynMeter (HIDDEN ON MOBILE) */}
-      <div
-        className="feyn-left  w-[50%] flex-col h-full 
-     shadow-2xl z-20"
-      >
+    <div className="flex h-[100dvh] max-h-[100dvh] overflow-hidden">
+      {/* Left Side - FeynMeter */}
+      <div className="feyn-left w-[50%] flex-col h-full shadow-2xl z-20">
         <FeynMeter
           correctAnswers={overallCorrectAnswers}
           questions={questions}
         />
       </div>
 
-      {/* 2. Right Side - Paper Container (FULL WIDTH ON MOBILE) */}
-      <div
-        className="
-  w-full paper-right lg:w-[50%] h-full
-  flex flex-col relative shadow-2xl
-  overflow-hidden
-  bg-[#FDFDFD]
-"
-      >
-            <SlideExplanation
-        isOpen={showSlide}
-        onClose={closeSlide}
-        question={currentQuestionData}
-        sessionData={sessionData as any}
-        geminiService={geminiService}
-      />
+      {/* Right Side - Paper Container */}
+      <div className="w-full paper-right lg:w-[50%] h-full flex flex-col relative shadow-2xl overflow-hidden bg-[#FDFDFD]">
+        <SlideExplanation
+          isOpen={showSlide}
+          onClose={closeSlide}
+          question={currentQuestionData}
+          sessionData={sessionData as any}
+          geminiService={geminiService}
+        />
         <SheetSelector
           isOpen={showSheetSelector}
           onClose={() => setShowSheetSelector(false)}
@@ -454,15 +495,13 @@ const TrainingPage = () => {
           isGeneratingExtra={isGeneratingExtra}
         />
 
-        {/* NOTEBOOK BINDER OVERLAYS */}
+        {/* Notebook binder */}
         <div className="absolute top-0 left-12 bottom-0 w-[1.5px] bg-red-200/50 z-10 hidden sm:block" />
-
-        {/* 3D Binder Holes */}
-        <div className="absolute top-0  left-2 sm:left-3 md:left-4 bottom-0 flex flex-col justify-around py-4 pointer-events-none z-20">
+        <div className="absolute top-0 left-2 sm:left-3 md:left-4 bottom-0 flex flex-col justify-around py-4 pointer-events-none z-20">
           {Array.from({ length: 13 }).map((_, i) => (
             <div
               key={i}
-              className="w-3.5 h-3.5  sm:h-3.5 sm:w-3.5 rounded-full bg-[#CCDAD7] shadow-[inset_1px_1px_2px_rgba(0,0,0,0.5)] "
+              className="w-3.5 h-3.5 sm:h-3.5 sm:w-3.5 rounded-full bg-[#CCDAD7] shadow-[inset_1px_1px_2px_rgba(0,0,0,0.5)]"
             />
           ))}
         </div>

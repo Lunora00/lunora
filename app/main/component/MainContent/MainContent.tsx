@@ -231,35 +231,6 @@ const MainContent: React.FC<MainContentProps> = ({
 
 </div>
 
-
-        {/* ================= FOOTER SECTION ================= */}
-        <div
-          className="relative w-full bg-top bg-no-repeat bg-cover"
-          style={{
-            backgroundImage: "url('/mainfooterbg.png')",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "bottom center",
-            backgroundSize: "cover",
-          }}
-        >
-          {/* Bottom fade for text readability */}
-          <div
-            className="absolute inset-0 -bottom-30 pointer-events-none z-[1]"
-            style={{
-              background: `
-        linear-gradient(
-          to bottom,
-          rgba(0,0,0,0) 25%,
-          rgba(0,0,0,0.25) 40%,
-          rgba(0,0,0,0.6) 55%,
-          rgba(0,0,0,0.35) 70%,
-          rgba(0,0,0,0.98) 100%
-        )
-      `,
-            }}
-          />
-
-        </div>
       </div>
     </div>
   );

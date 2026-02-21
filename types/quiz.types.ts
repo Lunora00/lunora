@@ -1,75 +1,93 @@
 // types/quiz.types.ts
 import { Timestamp } from "firebase/firestore";
 
+export type QuestionType =
+  | "mcq"
+  | "tf"
+  | "fill_blank"
+  | "match"
+  | "assert_reason"
+  | "code"
+  | "open";
+
+export interface RubricCriterion {
+  key: string;
+  max: number;
+}
+
+export interface TestCase {
+  input: string;
+  expectedOutput: string;
+}
+
 export interface Question {
-    userAnswerIndex: null;
-    id: string;
-    question: string;
-    options: string[];
-    correctAnswer: number;
-    explanation: string;
-    difficulty: string;
-    topic: string;
-    type: string;
-    estimatedTime: string;
-    analogy: string;
-    hint: string;
-    subtopic: any;
+  id: string;
+  type: QuestionType;
+  question: string;
+  options?: string[];
+  matchPairs?: { left: string; right: string }[];
+  correctAnswer?: number | number[] | string | string[];
+  explanation?: string;
+  difficulty?: "easy" | "medium" | "hard" | string;
+  topic?: string;
+  estimatedTimeSec?: number;
+  hint?: string;
+  rubric?: { criteria: RubricCriterion[] };
+  testCases?: TestCase[];
+  metadata?: Record<string, any>;
 }
 
 export interface SessionData {
-    id: string;
-    userId: string;
-    name: string;
-    topic: string;
+  id: string;
+  userId: string;
+  name: string;
+  topic: string;
 
-    questionlist: Question[];
+  questionlist: Question[];
 
-    completedQuestions: number;
-    correctAnswers: number;
-    totalQuestions: number;
+  completedQuestions: number;
+  correctAnswers: number;
+  totalQuestions: number;
 
-    subtopicPerformance: Record<string, SubtopicPerformance>;
+  subtopicPerformance: Record<string, SubtopicPerformance>;
 
-    allAttempts?: LastPracticeMetrics[];
+  allAttempts?: LastPracticeMetrics[];
 
-    isCompleted?: boolean;
-    score?: number;
-    lastAttemptedDate?: Date | Timestamp;
+  isCompleted?: boolean;
+  score?: number;
+  lastAttemptedDate?: Date | Timestamp;
 
-    createdAt: Date | Timestamp;
-    updatedAt: Date | Timestamp;
+  createdAt: Date | Timestamp;
+  updatedAt: Date | Timestamp;
 
-    content?: string;
+  content?: string;
 }
 
 export interface Session {
-    id: string;
-    userId: string;
-    userName: string;
-    topic: string;
+  id: string;
+  userId: string;
+  userName: string;
+  topic: string;
 
-    questionlist: Question[];
+  questionlist: Question[];
 
-    completedQuestions: number;
-    correctAnswers: number;
-    totalQuestions: number;
+  completedQuestions: number;
+  correctAnswers: number;
+  totalQuestions: number;
 
-    subtopicPerformance: Record<string, SubtopicPerformance>;
+  subtopicPerformance: Record<string, SubtopicPerformance>;
 
-    allAttempts?: LastPracticeMetrics[];
+  allAttempts?: LastPracticeMetrics[];
 
-    isCompleted?: boolean;
-    score?: number;
-    lastAttemptedDate?: Date | Timestamp;
+  isCompleted?: boolean;
+  score?: number;
+  lastAttemptedDate?: Date | Timestamp;
 
-    createdAt: Date | Timestamp;
-    updatedAt: Date | Timestamp;
+  createdAt: Date | Timestamp;
+  updatedAt: Date | Timestamp;
 
-    content?: string;
+  content?: string;
 }
-
-
 
 export interface LastPracticeMetrics {
   lastScorePercentage: number;
@@ -80,26 +98,26 @@ export interface LastPracticeMetrics {
 }
 
 export interface SubtopicPerformanceEntry {
-    name?: string;
-    scored?: number;
-    total: number;
-    correct?: number;
-    wrong?: number;
-    correctList?: string[];
-    wrongList?: string[];
+  name?: string;
+  scored?: number;
+  total: number;
+  correct?: number;
+  wrong?: number;
+  correctList?: string[];
+  wrongList?: string[];
 }
 
 export interface QuizState {
-    currentQuestionIndex: number;
-    userAnswer: number | null;
-    answer: string;
-    isAnswered: boolean;
-    isCorrect: boolean;
-    correctAnswers: number;
-    showHint: boolean;
-    showWrongAnswerHelp: boolean;
-    wrongAnswerData: any;
-    showAllQuestions: boolean;
+  currentQuestionIndex: number;
+  selectedAnswerIndex: number | null;
+  selectedAnswerValue?: string | string[] | number[];
+  isAnswered: boolean;
+  isCorrect: boolean;
+  correctAnswers: number;
+  showHint: boolean;
+  showWrongAnswerHelp: boolean;
+  wrongAnswerData: any;
+  showAllQuestions: boolean;
 }
 
 export interface SubtopicPerformance {
@@ -116,10 +134,10 @@ export interface WeakTopic {
   id: string; // Used as key/identifier (subtopic name slug)
   topic: string; // Subtopic name
   subject: string; // Extracted from session name
-  medal: 'bronze' | 'silver' | 'gold' | 'none';
+  medal: "bronze" | "silver" | "gold" | "none";
   score: number; // Percentage score
   attemptsCount: number; // Total questions attempted in this subtopic
-  urgency: 'critical' | 'high' | 'medium' | 'low';
+  urgency: "critical" | "high" | "medium" | "low";
   lastAttempt: { seconds: number }; // Last updated timestamp
   totalQuestions: number; // Total questions for this subtopic
   correctCount: number; // Scored for this subtopic

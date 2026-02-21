@@ -87,7 +87,7 @@ export default function PrivacyPage() {
             <p>
               For privacy-related inquiries or to exercise your data rights, please contact:
               <br />
-              <strong>Email:</strong> privacy@lunora.ai
+              <strong>Email:</strong> lunoraaiplus@gmail.com
               <br />
               <strong>Company:</strong> Lunora AI Technologies
             </p>

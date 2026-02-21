@@ -483,9 +483,9 @@ const SlideExplanation: React.FC<SlideExplanationProps> = ({
         if (!blastStarted) {
           return (
             <IntroPanel
-              title="Quick Fire Drill"
+              title="Quick Match Drill"
               proError={proError}
-              text="Engage in a highly compressed, randomized quiz session."
+              text="Pair the right concept with the right meaning."
               icon={
                 <svg
                   width="100%"

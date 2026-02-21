@@ -96,9 +96,9 @@ export default function TermsPage() {
             <p>
               If you have any questions regarding these Terms, please reach out to us:
               <br />
-              <strong>Email:</strong> support@lunora.ai
+              <strong>Email:</strong> lunoraaiplus@gmail.com
               <br />
-              <strong>Website:</strong> https://lunora.ai
+              <strong>Website:</strong> https://lunoraai.online
             </p>
           </section>
 

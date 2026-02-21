@@ -334,7 +334,7 @@ export default function LandingPage() {
   // ── Data ──────────────────────────────────────────────────────────────────
   const features = [
     {
-      title: "Drill Until You Master It 100%.",
+      title: "Generate 1,000+ Questions in One Session",
       description: `Every topic is broken into focused subtopics.\nInside each one, tap the + to generate unlimited new questions — every time from a different angle.\n\nNo repeats. No surface-level practice.\n\nEach question challenges your understanding deeper than the last, until the concept sticks for good. Move on only when you've truly mastered it.`,
       image: "/feat1.png",
       align: "right" as const,
@@ -371,9 +371,9 @@ export default function LandingPage() {
       desc: "Focus on a lesson or subtopic you want to master without distractions.",
     },
     {
-      img: "/howb3a.png",
+      img: "/Lunora-Ai-02-22-2026_01_11_AM.png",
       title: "Import & learn",
-      desc: "Paste a YouTube URL or any web article link and instantly turn it into structured quizzes.",
+      desc: "Upload a PDF, DOCX, image, audio, or video — or paste a YouTube URL or web article link — and instantly turn it into structured quizzes.",
     },
   ];
 
@@ -1288,8 +1288,7 @@ export default function LandingPage() {
                 lineHeight: 1.65,
               }}
             >
-              Join thousands of students building real mastery — one subtopic at
-              a time.
+             Master every concept deeply — one subtopic at a time.
             </p>
             <button
               className="btn-primary"

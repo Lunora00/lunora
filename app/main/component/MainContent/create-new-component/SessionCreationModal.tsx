@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth as useSession } from "../../../../hooks/useAuth";
-import { AlertCircle, ArrowLeft, Loader2, X } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { updateUserField } from "@/lib/indexdb/userCache";
 
 import {
@@ -48,7 +48,7 @@ interface SessionCreationModalProps {
   onClose: () => void;
 }
 
-type ContentType = "youtube" | "web";
+type ContentType = "youtube" | "web" | "file";
 
 // --- UI Colors and Branding ---
 const PRIMARY_COLOR = "#004738";
@@ -64,8 +64,7 @@ const SessionCreationModal: React.FC<SessionCreationModalProps> = ({
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  // State management
-  const [importSource, setImportSource] = useState("");
+  const [importSource, setImportSource] = useState<string | File>("");
   const [contentType, setContentType] = useState<ContentType>("youtube");
   const [isCreating, setIsCreating] = useState(false);
   const [urlError, setUrlError] = useState("");
@@ -77,23 +76,29 @@ const SessionCreationModal: React.FC<SessionCreationModalProps> = ({
   const [prevSubjects, setPrevSubjects] = useState<string[]>([]);
   const [prevTopics, setPrevTopics] = useState<string[]>([]);
   const [isSubjectsLoading, setIsSubjectsLoading] = useState(false);
-  const [supadataService, setSupadataService] = useState<SupadataService | null>(null);
-  const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
+  const [supadataService, setSupadataService] =
+    useState<SupadataService | null>(null);
+  const [geminiService, setGeminiService] = useState<GeminiService | null>(
+    null
+  );
   const [animationReady, setAnimationReady] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
-  const [stars, setStars] = useState<Array<{
-    id: number;
-    left: string;
-    top: string;
-    size: string;
-    delay: string;
-  }>>([]);
+  const [stars, setStars] = useState<
+    Array<{
+      id: number;
+      left: string;
+      top: string;
+      size: string;
+      delay: string;
+    }>
+  >([]);
 
   const terCanvasRef = useRef<HTMLCanvasElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const terrainPointsRef = useRef<number[]>([]);
 
-useEffect(() => {
+  // ── Canvas animation (unchanged) ─────────────────────────────────────────
+  useEffect(() => {
     const terrain = terCanvasRef.current;
     const background = bgCanvasRef.current;
     if (!terrain || !background) return;
@@ -108,10 +113,9 @@ useEffect(() => {
     terrain.width = background.width = width;
     terrain.height = background.height = height;
 
-    // --- 1. FIXED TERRAIN GENERATION ---
     if (terrainPointsRef.current.length === 0) {
-      let points = [];
-      let power = 2048; 
+      let points: number[] = [];
+      let power = 2048;
       let displacement = 120;
 
       const baseline = height * 0.86;
@@ -124,15 +128,13 @@ useEffect(() => {
             (points[j - (power / i) / 2] + points[j + (power / i) / 2]) / 2 +
             (Math.random() * displacement * 2 - displacement);
         }
-        displacement *= 0.52; 
+        displacement *= 0.52;
       }
       terrainPointsRef.current = points;
     }
 
-    // --- 2. VIBRANT ANIMATION LOGIC ---
     let entities: any[] = [];
 
-    // Star Class
     function Star(this: any) {
       this.size = Math.random() * 2;
       this.speed = Math.random() * 0.05;
@@ -149,7 +151,6 @@ useEffect(() => {
       bgCtx.fillRect(this.x, this.y, this.size, this.size);
     };
 
-    // ShootingStar Class
     function ShootingStar(this: any) {
       this.reset();
     }
@@ -172,7 +173,7 @@ useEffect(() => {
           this.reset();
         } else {
           bgCtx.lineWidth = this.size;
-          bgCtx.strokeStyle = "rgba(255, 255, 255, 0.8)"; // Bright white trail
+          bgCtx.strokeStyle = "rgba(255, 255, 255, 0.8)";
           bgCtx.beginPath();
           bgCtx.moveTo(this.x, this.y);
           bgCtx.lineTo(this.x + this.len, this.y - this.len);
@@ -183,7 +184,6 @@ useEffect(() => {
       }
     };
 
-    // Initialize Entities
     for (let i = 0; i < 120; i++) entities.push(new (Star as any)());
     entities.push(new (ShootingStar as any)());
     entities.push(new (ShootingStar as any)());
@@ -192,30 +192,28 @@ useEffect(() => {
 
     function animate() {
       if (bgCtx) bgCtx.clearRect(0, 0, width, height);
-
       entities.forEach((ent) => ent.update());
 
-      // DRAW TERRAIN WITH RIM LIGHTING
       if (terCtx) {
         terCtx.clearRect(0, 0, width, height);
         terCtx.shadowBlur = 20;
         terCtx.shadowColor = "rgba(255, 255, 255, 0.15)";
         terCtx.fillStyle = "#000000";
         terCtx.beginPath();
-        
+
         const pts = terrainPointsRef.current;
         for (let i = 0; i <= width; i++) {
           const idx = Math.floor((i / width) * (pts.length - 1));
           if (i === 0) terCtx.moveTo(0, pts[0]);
           else terCtx.lineTo(i, pts[idx]);
         }
-        
+
         terCtx.lineTo(width, height);
         terCtx.lineTo(0, height);
         terCtx.closePath();
         terCtx.fill();
         terCtx.shadowBlur = 0;
-      } 
+      }
 
       if (firstFrame) {
         firstFrame = false;
@@ -231,52 +229,37 @@ useEffect(() => {
       height = window.innerHeight;
       terrain.width = background.width = width;
       terrain.height = background.height = height;
-      // We do not clear terrainPointsRef here to keep the height fixed
     };
-    
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
+  // ── Error helper ──────────────────────────────────────────────────────────
   function getFriendlyErrorMessage(error: any): string {
-  const msg = error?.message?.toLowerCase?.() || "";
-
-  // Firebase errors
-  if (error?.code === "permission-denied") {
-    return "Your account does not have permission to perform this action.";
+    const msg = error?.message?.toLowerCase?.() || "";
+    if (error?.code === "permission-denied")
+      return "Your account does not have permission to perform this action.";
+    if (error?.code === "resource-exhausted")
+      return "Daily usage limit reached. Please try again tomorrow.";
+    if (msg.includes("gemini") || msg.includes("model"))
+      return "AI service is temporarily busy. Please try again in a moment.";
+    if (msg.includes("supadata") || msg.includes("transcript"))
+      return "We could not fetch content from this link. Please try another one.";
+    if (msg.includes("network") || msg.includes("fetch"))
+      return "Network issue. Please check your internet connection.";
+    if (msg.includes("timeout"))
+      return "Request took too long. Please try again.";
+    if (msg.includes("file too large"))
+      return "The file is too large. Please use a smaller file.";
+    if (msg.includes("unsupported file"))
+      return "This file type is not supported.";
+    if (msg.includes("empty"))
+      return "The file appears to be empty or unreadable. Please try another file.";
+    return "Something went wrong. Please try again.";
   }
 
-  if (error?.code === "resource-exhausted") {
-    return "Daily usage limit reached. Please try again tomorrow.";
-  }
-
-  // Gemini errors
-  if (msg.includes("gemini") || msg.includes("model")) {
-    return "AI service is temporarily busy. Please try again in a moment.";
-  }
-
-  // Supadata errors
-  if (msg.includes("supadata") || msg.includes("transcript")) {
-    return "We could not fetch content from this link. Please try another one.";
-  }
-
-  // Network errors
-  if (msg.includes("network") || msg.includes("fetch")) {
-    return "Network issue. Please check your internet connection.";
-  }
-
-  // Timeout
-  if (msg.includes("timeout")) {
-    return "Request took too long. Please try again.";
-  }
-
-  // Default fallback
-  return "Something went wrong. Please try again.";
-}
-
-
-  // Fetch previous data from Firestore
+  // ── Fetch previous subjects / topics ─────────────────────────────────────
   const fetchPrevData = async (userId: string) => {
     setIsSubjectsLoading(true);
     try {
@@ -288,18 +271,14 @@ useEffect(() => {
       const topics: string[] = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.subject && typeof data.subject === "string") {
+        if (data.subject && typeof data.subject === "string")
           subjects.push(data.subject);
-        }
-        if (data.name && typeof data.name === "string") {
+        if (data.name && typeof data.name === "string")
           topics.push(data.name);
-        }
       });
 
-      const uniqueSubjects = Array.from(new Set(subjects)).sort();
-      const uniqueTopics = Array.from(new Set(topics)).sort();
-      setPrevSubjects(uniqueSubjects);
-      setPrevTopics(uniqueTopics);
+      setPrevSubjects(Array.from(new Set(subjects)).sort());
+      setPrevTopics(Array.from(new Set(topics)).sort());
     } catch (error) {
       console.error("Error fetching previous data:", error);
     } finally {
@@ -307,7 +286,7 @@ useEffect(() => {
     }
   };
 
-  // Initialize services and fetch data when modal opens
+  // ── Init on open ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isOpen) return;
 
@@ -326,13 +305,12 @@ useEffect(() => {
       setGeminiService(new GeminiService());
     } catch (error: any) {
       console.error("Error initializing services:", error);
-      if (error.message.includes("API")) {
+      if (error.message.includes("API"))
         setUrlError("Service not configured. Please check API keys.");
-      }
     }
   }, [isOpen, status, router, onClose, session?.user?.id]);
 
-  // Helper function to create subtopic performance map
+  // ── Subtopic performance map helper ──────────────────────────────────────
   const createSubtopicPerformanceMap = (questions: Question[]) => {
     return questions.reduce(
       (acc, question) => {
@@ -348,7 +326,7 @@ useEffect(() => {
     );
   };
 
-  // Reset state when modal closes
+  // ── Reset on close ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isOpen) {
       setImportSource("");
@@ -366,7 +344,6 @@ useEffect(() => {
     }
   }, [isOpen]);
 
-  // URL validation
   const isValidUrl = (url: string) => {
     try {
       new URL(url);
@@ -376,7 +353,6 @@ useEffect(() => {
     }
   };
 
-  // Step handlers
   const handleSubjectSubmit = () => {
     if (!subject.trim()) {
       setUrlError("Please enter or select a subject.");
@@ -395,17 +371,13 @@ useEffect(() => {
     setCurrentStep(3);
   };
 
+  // ── Main session creation handler ─────────────────────────────────────────
   const handleStartQuiz = async (useSample: boolean = false) => {
-    if (
-      !session?.user?.id ||
-      !geminiService ||
-      (!useSample && !supadataService)
-    ) {
+    if (!session?.user?.id || !geminiService) {
       setUrlError("Service or authentication issue.");
       return;
     }
 
-    // 1. Basic Field Validation
     if (!subject.trim()) {
       setUrlError("Subject is missing. Please go back and enter a subject.");
       setCurrentStep(1);
@@ -413,152 +385,220 @@ useEffect(() => {
     }
 
     if (!lessonTopic.trim()) {
-      setUrlError("Lesson/Topic is missing. Please go back and enter a lesson/topic.");
+      setUrlError(
+        "Lesson/Topic is missing. Please go back and enter a lesson/topic."
+      );
       setCurrentStep(2);
       return;
     }
 
-    if (!useSample && (!importSource.trim() || !isValidUrl(importSource))) {
-      setUrlError(
-        `Please enter a valid ${
-          contentType === "youtube" ? "YouTube Video" : "Web Page"
-        } URL to proceed.`
-      );
-      return;
+    const isFile = importSource instanceof File;
+    const isUrl = typeof importSource === "string";
+
+    if (!useSample) {
+      if (isFile) {
+        // validation already done in Step3URLInput
+      } else if (isUrl) {
+        if (!importSource.trim() || !isValidUrl(importSource)) {
+          setUrlError(
+            `Please enter a valid ${
+              contentType === "youtube" ? "YouTube Video" : "Web Page"
+            } URL to proceed.`
+          );
+          return;
+        }
+      } else {
+        setUrlError("Please provide a URL or upload a file.");
+        return;
+      }
     }
 
     setUrlError("");
     setIsCreating(true);
 
     try {
-      // --- STEP A: VERIFY USAGE LIMITS ONLY ---      
-const userRef = doc(db, "users", session.user.id);
-const userSnap = await getDoc(userRef);
+      // ── STEP A: CHECK USAGE LIMITS ────────────────────────────────────────
+      const userRef = doc(db, "users", session.user.id);
+      const userSnap = await getDoc(userRef);
 
-if (!userSnap.exists()) {
-    // If we reach here, it means the user is logged in but has no DB entry.
-    // Instead of guessing data, we tell them there's a profile error.
-    setUrlError("User profile not found. Please try logging out and back in.");
-    setIsCreating(false);
-    return;
-}
+      if (!userSnap.exists()) {
+        setUrlError(
+          "User profile not found. Please try logging out and back in."
+        );
+        setIsCreating(false);
+        return;
+      }
 
-const userData = userSnap.data();
-const isPro = userData.isPro || false;
-const usedSessions = userData.usedSessions || 0;
+      const userData = userSnap.data();
+      const isPro = userData.isPro || false;
+      const usedSessions = userData.usedSessions || 0;
 
-if (!isPro && usedSessions >= 1) {
-  setUrlError("Free limit reached. Please upgrade to Pro for unlimited sessions.");
-  setIsCreating(false);
-  return;
-}
-setIsCreating(true);
+      if (!isPro && usedSessions >= 1) {
+        setUrlError(
+          "Free limit reached. Please upgrade to Pro for unlimited sessions."
+        );
+        setIsCreating(false);
+        return;
+      }
 
-      // --- STEP B: FETCH CONTENT & GENERATE QUESTIONS ---
-      setProcessingStep(
-        `Fetching content`
+      // ── STEP B: FETCH URL CONTENT (URL sessions only) ─────────────────────
+      let scrapedContent = "";
+      let sourceUrlForDB = "";
+
+      if (!isFile) {
+        if (!supadataService) {
+          setUrlError("Service not available.");
+          setIsCreating(false);
+          return;
+        }
+        setProcessingStep("Fetching content...");
+        const result = await supadataService.processUrl(
+          importSource as string
+        );
+        scrapedContent = result.text ?? "";
+        sourceUrlForDB = importSource as string;
+      } else {
+        sourceUrlForDB = (importSource as File).name;
+      }
+
+      // ── STEP C: GENERATE QUESTIONS (+ parallel content extraction for files)
+      //
+      // For URL sessions:  generateQuestions(scrapedText, subject)
+      //   → 1 Gemini call for questions
+      //   → rawQuestions.extractedContent === ""
+      //
+      // For FILE sessions: generateQuestions(file, subject, lessonTopic)
+      //   → 2 Gemini calls fire IN PARALLEL inside geminiService:
+      //       • questions call
+      //       • content-extraction call
+      //   → rawQuestions.extractedContent = comprehensive educational text
+
+      setProcessingStep("Generating questions...");
+
+      const rawQuestions = await geminiService.generateQuestions(
+        isFile ? (importSource as File) : scrapedContent,
+        subject,
+        lessonTopic
       );
-      
-      const result = await supadataService!.processUrl(
-        importSource,
-      );
 
+      // ── STEP D: RESOLVE session.content — NEVER allow undefined ──────────
+      // URL session  → scrapedContent  (Supadata text, always a string)
+      // File session → extractedContent from parallel Gemini call
+      // Fallback to "" if anything is somehow still undefined/null
 
-  
+      const sessionContent: string = isFile
+        ? (rawQuestions.extractedContent ?? "")
+        : (scrapedContent ?? "");
 
-      setProcessingStep("Generating questions");
-      const rawQuestions = await geminiService!.generateQuestions(
-        result.text,
-        subject
-      );
+      // ── STEP E: SANITISE sessionData — strip every undefined value ────────
+      // Firestore throws on any undefined field so we use ?? "" / ?? 0 / ?? {}
+      // throughout. This is the single fix for the "Unsupported field value:
+      // undefined" error.
 
-      // --- STEP C: PREPARE DATA & SAVE ---
-      setProcessingStep("Saving new session");
-      
+      setProcessingStep("Saving new session...");
+
       const initialSubtopicPerformance = createSubtopicPerformanceMap(
         rawQuestions.questionList as any
       );
 
+      // Sanitise each question so no field is ever undefined
+      const sanitisedQuestions = (rawQuestions.questionList ?? []).map(
+        (q: any) => ({
+          id:            q.id            ?? Math.random().toString(36).substr(2, 9),
+          question:      q.question      ?? "",
+          options:       Array.isArray(q.options) ? q.options : ["A", "B", "C", "D"],
+          correctAnswer: typeof q.correctAnswer === "number" ? q.correctAnswer : 0,
+          explanation:   q.explanation   ?? "",
+          difficulty:    q.difficulty    ?? "Medium",
+          topic:         q.topic         ?? subject,
+          subtopic:      q.subtopic      ?? "General",
+          type:          q.type          ?? "Multiple Choice",
+          hint:          q.hint          ?? "",
+          analogy:       q.analogy       ?? "",
+        })
+      );
+
       const sessionData = {
-        userId: session.user.id,
-        subject: subject,
-        svgTopicTitle: rawQuestions.svgTopicTitle,
-        lessonTopic: lessonTopic,
-        majorSubject: rawQuestions.majorSubject || "General",
-        isCompleted: false,
-        userEmail: session.user.email,
-        name: lessonTopic,
-        questionlist: rawQuestions.questionList,
-        totalQuestions: rawQuestions.questionList.length,
-        totalMarks: rawQuestions.questionList.length,
-        content: result.text,
+        userId:           session.user.id,
+        subject:          subject,
+        svgTopicTitle:    rawQuestions.svgTopicTitle    ?? "",
+        lessonTopic:      lessonTopic,
+        majorSubject:     rawQuestions.majorSubject     ?? "General",
+        isCompleted:      false,
+        userEmail:        session.user.email            ?? "",
+        name:             lessonTopic,
+        questionlist:     sanitisedQuestions,
+        totalQuestions:   sanitisedQuestions.length,
+        totalMarks:       sanitisedQuestions.length,
+        // ── THE key field — always a string, never undefined ─────────────────
+        content:          sessionContent,
         lastPracticeDate: {},
-        scoredMarks: 0,
-        medal: "",
-        medalLastDays: {},
-        weakArea: {},
+        scoredMarks:      0,
+        medal:            "",
+        medalLastDays:    {},
+        weakArea:         {},
         learningToolUsed: {},
-        totalpracticedSession: {},
-        percentaeGrowthLastDays: {},
-        subtopicPerformance: initialSubtopicPerformance,
-        sourceUrl: importSource,
+        totalpracticedSession:    {},
+        percentaeGrowthLastDays:  {},
+        subtopicPerformance:      initialSubtopicPerformance,
+        sourceUrl:        sourceUrlForDB,
         motivationaltext: "",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        createdAt:        serverTimestamp(),
+        updatedAt:        serverTimestamp(),
       };
 
-      
+      const sessionDoc = await addDoc(
+        collection(db, "sessions"),
+        sessionData
+      );
 
-      // 1. Create the session document
-      const sessionDoc = await addDoc(collection(db, "sessions"), sessionData);
-      
-      // 2. Increment the usage counter in the user's profile
-      await setDoc(userRef, { 
-        usedSessions: increment(1),
-        lastSessionCreated: serverTimestamp()
-      }, { merge: true });
+      await setDoc(
+        userRef,
+        {
+          usedSessions: increment(1),
+          lastSessionCreated: serverTimestamp(),
+        },
+        { merge: true }
+      );
 
       await updateUserField(session.user.id, {
-  usedSessions: (userData.usedSessions || 0) + 1,
-});
+        usedSessions: (userData.usedSessions || 0) + 1,
+      });
 
+      await saveSessionToIndexedDB(
+        session.user.id,
+        sessionDoc.id,
+        sessionData
+      );
 
-      await saveSessionToIndexedDB(session.user.id,sessionDoc.id, sessionData);
-      
-
-      // --- STEP D: REDIRECT ---
+      // ── STEP F: REDIRECT ──────────────────────────────────────────────────
       setProcessingStep("Redirecting to your session!");
       setTimeout(() => {
         onClose();
         router.push(`/training/${sessionDoc.id}`);
       }, 500);
-
-    }  catch (error: any) {
-  console.error("❌ Internal error:", error);
-
-  const friendlyMessage = getFriendlyErrorMessage(error);
-  setUrlError(friendlyMessage);
-
-  setProcessingStep("");
-  setIsCreating(false);
-}
-
+    } catch (error: any) {
+      console.error("❌ Session creation error:", error);
+      setUrlError(getFriendlyErrorMessage(error));
+      setProcessingStep("");
+      setIsCreating(false);
+    }
   };
 
-  // Dynamic ready checks
   const isUrlValidAndReady =
     currentStep === 3 &&
-    isValidUrl(importSource.trim()) &&
-    importSource.trim() !== "" &&
-    !isCreating;
+    !isCreating &&
+    (importSource instanceof File
+      ? true
+      : typeof importSource === "string" &&
+        isValidUrl(importSource.trim()) &&
+        importSource.trim() !== "");
 
   if (!isOpen) return null;
 
   return (
- <>
- {isPageLoading && (
-  <LoadingScreen />
-)}
+    <>
+      {isPageLoading && <LoadingScreen />}
 
       <style jsx global>{`
         @keyframes twinkle {
@@ -582,23 +622,19 @@ setIsCreating(true);
         }
       `}</style>
 
-      {/* Main Wrapper */}
-     <div
-  className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
-  style={{
-    background: `
-      radial-gradient(circle at 20% 30%, rgba(60,120,255,0.25), transparent 45%),
-      radial-gradient(circle at 80% 40%, rgba(120,80,255,0.18), transparent 45%),
-      radial-gradient(circle at 50% 80%, rgba(40,140,255,0.18), transparent 50%),
-      linear-gradient(to bottom, #0b1a33, #131e41 70%, #020406 100%)
-    `
-  }}
->
-
-        {/* Background Stars */}
+      <div
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
+        style={{
+          background: `
+            radial-gradient(circle at 20% 30%, rgba(60,120,255,0.25), transparent 45%),
+            radial-gradient(circle at 80% 40%, rgba(120,80,255,0.18), transparent 45%),
+            radial-gradient(circle at 50% 80%, rgba(40,140,255,0.18), transparent 50%),
+            linear-gradient(to bottom, #0b1a33, #131e41 70%, #020406 100%)
+          `,
+        }}
+      >
         <canvas ref={bgCanvasRef} className="z-0" />
 
-        {/* Mountain/Terrain - Responsive height */}
         <div className="absolute bottom-0 left-0 w-full h-[40vh] sm:h-[50vh] md:h-[60vh] z-10 opacity-90 pointer-events-none">
           <canvas
             ref={terCanvasRef}
@@ -611,7 +647,6 @@ setIsCreating(true);
           />
         </div>
 
-        {/* Half Moon - Responsive positioning and size */}
         {animationReady && (
           <div className="absolute top-6 sm:top-8 md:top-12 left-1/2 -translate-x-1/2 z-20 animate-in fade-in zoom-in-95 duration-1000">
             <div className="relative w-19 h-19 sm:w-20 sm:h-20 md:w-28 md:h-28">
@@ -639,47 +674,35 @@ setIsCreating(true);
           </div>
         )}
 
-        {/* Global Close Button - Responsive positioning and size */}
         {!isCreating && animationReady && (
           <button
-  onClick={() => {
-    setIsPageLoading(true);
-    setTimeout(() => {
-      onClose(); // close modal
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        router.push("/main");
-      }
-    }, 200);
-  }}
-className={`
-  absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-[70]
-  w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14
-  flex items-center justify-center
-  rounded-full
-  bg-white/10
-  hover:bg-white/20
-  text-white
-  active:scale-90
-  cursor-pointer
-  transform transition-all duration-200 ease-out
-  shadow-md shadow-black/30
-  hover:shadow-lg hover:shadow-black/50
-  focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30
-`}
-
-
->
-  <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
-</button>
-
+            onClick={() => {
+              setIsPageLoading(true);
+              setTimeout(() => {
+                onClose();
+                if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  router.push("/main");
+                }
+              }, 200);
+            }}
+            className={`
+              absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-[70]
+              w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14
+              flex items-center justify-center rounded-full
+              bg-white/10 hover:bg-white/20 text-white active:scale-90 cursor-pointer
+              transform transition-all duration-200 ease-out
+              shadow-md shadow-black/30 hover:shadow-lg hover:shadow-black/50
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30
+            `}
+          >
+            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+          </button>
         )}
 
-        {/* Content Container - Responsive padding and spacing */}
         {animationReady && (
           <div className="relative z-[55] w-full max-w-[95%] sm:max-w-xl md:max-w-2xl px-4 sm:px-6 flex flex-col items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* LOADING STATE */}
             {isCreating ? (
               <div className="flex flex-col items-center justify-center space-y-4 sm:space-y-6">
                 <div className="relative">
@@ -697,7 +720,6 @@ className={`
                 </div>
               </div>
             ) : (
-              /* INPUT STEPS - Responsive margin */
               <div className="w-full mt-8 sm:mt-10 md:mt-14 ml-0 sm:ml-8 md:ml-14">
                 {currentStep === 1 && (
                   <Step1SubjectInput
@@ -761,12 +783,8 @@ className={`
                     TYPING_QUOTE={TYPING_QUOTE}
                     stars={stars}
                   />
-                  
                 )}
-                
-
               </div>
-              
             )}
           </div>
         )}
