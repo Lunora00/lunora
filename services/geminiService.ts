@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { env } from "process";
 
 // --- INTERFACES ---
 

@@ -3,7 +3,7 @@ import path from "path";
 import mammoth from "mammoth";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI("AIzaSyA8QpQSP7jxehj6C22_blFKvEo7uAnu7cw");
+const genAI = new GoogleGenerativeAI("AIzaSyD2-vL9_X5e4FvJ-ExABz5etXMiDceJInU");
 
 async function run() {
   try {
