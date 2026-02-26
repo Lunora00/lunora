@@ -19,6 +19,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
      {
       url: 'https://lunoraai.online/tools/flashcardmaker',
       lastModified: new Date(),
-    },
+    },	
+
+    {
+      url: 'https://lunoraai.online/tools/study-planner',
+      lastModified: new Date(),
+    }
   ]
 }
