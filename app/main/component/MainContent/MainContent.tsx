@@ -219,7 +219,13 @@ const MainContent: React.FC<MainContentProps> = ({
   <div className="absolute inset-0 pointer-events-none">
     <OptimizedStarList stars={recentSessionStars} />
   </div>
-
+ <div className="relative z-20 px-4 sm:px-6 md:px-8 pt-10 pb-16">
+    <RecentSessions
+      sessions={(sessions as any) || []}
+      router={router}
+      handleResetAndRedirect={handleResetAndRedirect as any}
+    />
+  </div>
 
 
 </div>
