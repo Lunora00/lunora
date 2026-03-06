@@ -302,40 +302,20 @@ export default function PurdueGPACalculator() {
     },
   ];
 
-  const otherGPATools = [
-    { name: "ASU Cumulative GPA Calculator",       href: "/tools/gpa-calculator/cumulative-gpa-calculator-asu" },
-    { name: "OSU GPA Calculator",                  href: "/tools/gpa-calculator/osu-gpa-calculator" },
-    { name: "GPA Calculator Berkeley",             href: "/tools/gpa-calculator-berkeley" },
-    { name: "UCSD GPA Calculator",                 href: "/tools/gpa-calculator/ucsd-gpa-calculator" },
-    { name: "IU GPA Calculator",                   href: "/tools/gpa-calculator/iu-gpa-calculator" },
-    { name: "FSU GPA Calculator",                  href: "/tools/gpa-calculator/fsu-gpa-calculator" },
-    { name: "UTK GPA Calculator",                  href: "/tools/gpa-calculator/utk-gpa-calculator" },
-    { name: "Cumulative GPA Calculator Berkeley",  href: "/tools/gpa-calculator/cumulative-gpa-calculator-berkeley" },
-    { name: "Cumulative GPA Calculator LSU",       href: "/tools/gpa-calculator/cumulative-gpa-calculator-lsu" },
-    { name: "Rutgers GPA Calculator",              href: "/tools/gpa-calculator/rutgers-gpa-calculator" },
-    { name: "UIUC GPA Calculator",                 href: "/tools/gpa-calculator/uiuc-gpa-calculator" },
-    { name: "UT Austin GPA Calculator",            href: "/tools/gpa-calculator/ut-austin-gpa-calculator" },
-    { name: "TAMU GPA Calculator",                 href: "/tools/gpa-calculator/tamu-gpa-calculator" },
-    { name: "UH GPA Calculator",                   href: "/tools/gpa-calculator/uh-gpa-calculator" },
-    { name: "Clemson GPA Calculator",              href: "/tools/gpa-calculator/clemson-gpa-calculator" },
-    { name: "UVM GPA Calculator",                  href: "/tools/gpa-calculator/uvm-gpa-calculator" },
-  ];
+const otherGPATools = [
+  { name: "ASU Cumulative GPA Calculator", href: "/tools/gpa-calculator/cumulative-gpa-calculator-asu" },
+  { name: "OSU GPA Calculator", href: "/tools/gpa-calculator/osu-gpa-calculator" },
+  { name: "GPA Calculator Berkeley", href: "/tools/gpa-calculator/gpa-calculator-berkeley" },
+  { name: "UCSD GPA Calculator", href: "/tools/gpa-calculator/ucsd-gpa-calculator" },
+  { name: "IU GPA Calculator", href: "/tools/gpa-calculator/iu-gpa-calculator" },
+  { name: "FSU GPA Calculator", href: "/tools/gpa-calculator/fsu-gpa-calculator" },
+  { name: "UTK GPA Calculator", href: "/tools/gpa-calculator/utk-gpa-calculator" },
+  { name: "Cumulative GPA Calculator Berkeley", href: "/tools/gpa-calculator/cumulative-gpa-calculator-berkeley" },
+  { name: "Cumulative GPA Calculator LSU", href: "/tools/gpa-calculator/cumulative-gpa-calculator-lsu" },
+  { name: "Rutgers GPA Calculator", href: "/tools/gpa-calculator/rutgers-gpa-calculator" },
+  { name: "UIUC GPA Calculator", href: "/tools/gpa-calculator/uiuc-gpa-calculator" }
+];
 
-  const apTools = [
-    { name: "AP Environmental Science Score Calculator", href: "/tools/ap-environmental-science-score-calculator" },
-    { name: "AP Biology Score Calculator",               href: "/tools/ap-biology-score-calculator" },
-    { name: "AP Chemistry Score Calculator",             href: "/tools/ap-chemistry-score-calculator" },
-    { name: "AP Physics 1 Score Calculator",             href: "/tools/ap-physics-1-score-calculator" },
-    { name: "AP Physics 2 Score Calculator",             href: "/tools/ap-physics-2-score-calculator" },
-    { name: "AP Calculus AB Score Calculator",           href: "/tools/ap-calculus-ab-score-calculator" },
-    { name: "AP Calculus BC Score Calculator",           href: "/tools/ap-calculus-bc-score-calculator" },
-    { name: "AP Statistics Score Calculator",            href: "/tools/ap-statistics-score-calculator" },
-    { name: "AP US History Score Calculator",            href: "/tools/ap-us-history-score-calculator" },
-    { name: "AP Macroeconomics Score Calculator",        href: "/tools/ap-macroeconomics-score-calculator" },
-    { name: "AP English Language Score Calculator",      href: "/tools/ap-english-language-score-calculator" },
-    { name: "AP Human Geography Score Calculator",       href: "/tools/ap-human-geography-score-calculator" },
-    { name: "AP Physics C Mechanics Score Calculator",   href: "/tools/ap-physics-c-mechanics-score-calculator" },
-  ];
 
   const honorThresholds = [
     { label: "Highest Distinction", range: "3.90 – 4.00", color: "#1a6e3c" },
