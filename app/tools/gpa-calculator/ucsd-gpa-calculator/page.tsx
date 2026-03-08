@@ -299,7 +299,7 @@ export default function UCSDGPACalculator() {
   const otherGPATools = [
     { name: "ASU Cumulative GPA Calculator",        href: "/tools/gpa-calculator/cumulative-gpa-calculator-asu" },
     { name: "OSU GPA Calculator",                   href: "/tools/gpa-calculator/osu-gpa-calculator" },
-    { name: "GPA Calculator Berkeley",              href: "/tools/gpa-calculator-berkeley" },
+    { name: "GPA Calculator Berkeley",              href: "/tools/gpa-calculator/gpa-calculator-berkeley" },
     { name: "Cumulative GPA Calculator Berkeley",   href: "/tools/gpa-calculator/cumulative-gpa-calculator-berkeley" },
     { name: "UTK GPA Calculator",                   href: "/tools/gpa-calculator/utk-gpa-calculator" },
     { name: "Purdue University GPA Calculator",     href: "/tools/gpa-calculator/purdue-gpa-calculator" },

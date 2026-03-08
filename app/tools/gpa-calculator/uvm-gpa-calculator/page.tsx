@@ -302,7 +302,7 @@ export default function UVMGPACalculator() {
   const otherGPATools = [
     { name: "ASU Cumulative GPA Calculator",       href: "/tools/gpa-calculator/cumulative-gpa-calculator-asu" },
     { name: "OSU GPA Calculator",                  href: "/tools/gpa-calculator/osu-gpa-calculator" },
-    { name: "GPA Calculator Berkeley",             href: "/tools/gpa-calculator-berkeley" },
+    { name: "GPA Calculator Berkeley",             href: "/tools/gpa-calculator/gpa-calculator-berkeley" },
     { name: "UCSD GPA Calculator",                 href: "/tools/gpa-calculator/ucsd-gpa-calculator" },
     { name: "IU GPA Calculator",                   href: "/tools/gpa-calculator/iu-gpa-calculator" },
     { name: "FSU GPA Calculator",                  href: "/tools/gpa-calculator/fsu-gpa-calculator" },

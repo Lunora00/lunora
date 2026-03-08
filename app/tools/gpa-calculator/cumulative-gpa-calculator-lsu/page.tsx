@@ -329,7 +329,7 @@ export default function PurdueGPACalculator() {
     { name: "TAMU GPA Calculator",                  href: "/tools/gpa-calculator/tamu-gpa-calculator" },
     { name: "UH GPA Calculator",                    href: "/tools/gpa-calculator/uh-gpa-calculator" },
     { name: "OSU GPA Calculator",                   href: "/tools/gpa-calculator/osu-gpa-calculator" },
-    { name: "GPA Calculator Berkeley",              href: "/tools/gpa-calculator-berkeley" },
+    { name: "GPA Calculator Berkeley",              href: "/tools/gpa-calculator/gpa-calculator-berkeley" },
     { name: "UCSD GPA Calculator",                  href: "/tools/gpa-calculator/ucsd-gpa-calculator" },
     { name: "IU GPA Calculator",                    href: "/tools/gpa-calculator/iu-gpa-calculator" },
     { name: "FSU GPA Calculator",                   href: "/tools/gpa-calculator/fsu-gpa-calculator" },
